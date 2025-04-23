@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "208789463843",
+    "project_id": "internseek-c2cfe",
+    "storage_bucket": "internseek-c2cfe.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:208789463843:android:fce5f23331e68e5693a296",
+        "android_client_info": {
+          "package_name": "com.example.internseek"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "208789463843-hd5gtueumn5i9oivigj70mofprov2aea.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.internseek",
+            "certificate_hash": "d58df59cb57717c0ed975cf9a7a1e839a7f6f9c1"
+          }
+        },
+        {
+          "client_id": "208789463843-loss6c85454f5pgbe0c9l89cep15jcn3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD2mEhnpatuo0BD3ghrmDv6T_WJrF5R_4w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "208789463843-loss6c85454f5pgbe0c9l89cep15jcn3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
