@@ -4,14 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class Home extends StatefulWidget {
-  const Home({super.key});
+  const Home();
 
   @override
   State<Home> createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
-
   bool isLoading = true;
   String studentName = "";
   String email = "";
@@ -19,14 +18,14 @@ class _HomeState extends State<Home> {
   void fetchUserData() async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid != null) {
-      final doc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      final doc =
+          await FirebaseFirestore.instance.collection('users').doc(uid).get();
       final data = doc.data();
       if (data != null) {
         setState(() {
           studentName = data['studentName'] ?? 'No Name';
           email = data['email'] ?? 'No Email';
           isLoading = false;
-
         });
       }
     }
@@ -37,6 +36,7 @@ class _HomeState extends State<Home> {
     // TODO: implement initState
     super.initState();
     fetchUserData();
+    // _isDark = widget.isDark;
   }
 
   @override
@@ -44,71 +44,79 @@ class _HomeState extends State<Home> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.purple,foregroundColor: Colors.white,
-        onPressed: (){
-
-        },
-        child: Icon(Icons.add),),
+        backgroundColor: const Color.fromARGB(255, 72, 144, 180),
+        foregroundColor: Colors.white,
+        onPressed: () {},
+        child: Icon(Icons.add),
+      ),
       appBar: AppBar(
         title: const Text("Home"),
         /*automaticallyImplyLeading: false,*/
         actions: [
-          IconButton(onPressed: () async {
-            GoogleSignIn googleSignIn = GoogleSignIn();
-            googleSignIn.disconnect();
-            await FirebaseAuth.instance.signOut();
-            Navigator.of(context).pushNamedAndRemoveUntil("login", (route) => false);
-          }, icon: Icon(Icons.exit_to_app))
+          IconButton(
+            onPressed: () async {
+              GoogleSignIn googleSignIn = GoogleSignIn();
+              googleSignIn.disconnect();
+              await FirebaseAuth.instance.signOut();
+              Navigator.of(
+                context,
+              ).pushNamedAndRemoveUntil("login", (route) => false);
+            },
+            icon: Icon(Icons.exit_to_app),
+          ),
         ],
       ),
-      drawer: Drawer(child: ListView(
-        padding: EdgeInsets.all(0),
-        children: [
-          DrawerHeader(decoration: BoxDecoration(
-            color: Colors.purple,
-          ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                CircleAvatar(
-                  radius: 30,
-                  child: Icon(Icons.person, size: 40,),
-                ),
-                SizedBox(height: 10,),
-                Text(studentName,style: TextStyle(color: Colors.white,fontSize: 20),),
-                Text(email,style: TextStyle(color: Colors.white,fontSize: 20),),
-
-              ],
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.all(0),
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(color: Colors.purple),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  CircleAvatar(radius: 30, child: Icon(Icons.person, size: 40)),
+                  SizedBox(height: 10),
+                  Text(
+                    studentName,
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                  ),
+                  Text(
+                    email,
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                  ),
+                ],
+              ),
             ),
-          ),
-          ListTile(
-            leading: Icon(Icons.home),
-            title: Text("Home"),
-            onTap: (){
-              Navigator.of(context).pushReplacementNamed("home");
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.settings),
-            title: Text("Settings"),
-            onTap: (){
-              Navigator.of(context).pushNamed("settings");
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.person),
-            title: Text("Profile"),
-            onTap: (){
-              Navigator.of(context).pushNamed("profile");
-            },
-          )
-        ],
+            ListTile(
+              leading: Icon(Icons.home),
+              title: Text("Home"),
+              onTap: () {
+                Navigator.of(context).pushReplacementNamed("home");
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.settings),
+              title: Text("Settings"),
+              onTap: () {
+                Navigator.of(context).pushNamed("settings");
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.person),
+              title: Text("Profile"),
+              onTap: () {
+                Navigator.of(context).pushNamed("profile");
+              },
+            ),
+          ],
+        ),
       ),
-      ),
-      body:isLoading == true ? Center(child: CircularProgressIndicator(),) : Container(
-        child: Text("Cont"),
-      ),
+      body:
+          isLoading == true
+              ? Center(child: CircularProgressIndicator())
+              : Container(child: Text("Cont")),
     );
   }
 }
