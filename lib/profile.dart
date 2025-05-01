@@ -18,31 +18,27 @@ class _ProfileState extends State<Profile> {
   bool isLoading = true;
 
   Future<void> loadUserData() async {
-    final doc =
-        await FirebaseFirestore.instance.collection('users').doc(uid).get();
-    final data = doc.data();
-    if (data != null) {
-      nameStudent = data['studentName'] ?? '';
-      major = data['major'] ?? '';
-      university = data['university'] ?? '';
-      email = data['email'] ?? '';
+    try {
+      final doc =
+          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      final data = doc.data();
+      if (data != null) {
+        setState(() {
+          nameStudent = data['studentName'] ?? '';
+          major = data['major'] ?? '';
+          university = data['university'] ?? '';
+          email = data['email'] ?? '';
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error loading profile: $e')));
     }
-    setState(() {
-      isLoading = false;
-    });
-  }
-
-  Future<void> saveChanges() async {
-    await FirebaseFirestore.instance.collection('users').doc(uid).update({
-      'studentName': nameStudent,
-      'major': major,
-      'university': university,
-      'email': email,
-    });
-
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text('Profile updated successfully')));
   }
 
   @override
@@ -54,91 +50,146 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Profile"), centerTitle: true),
+      appBar: AppBar(
+        title: Text("My Profile"),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.deepPurple,
+        foregroundColor: Colors.white,
+      ),
       body:
           isLoading
               ? Center(child: CircularProgressIndicator())
-              : Padding(
-                padding: EdgeInsets.all(16),
+              : SingleChildScrollView(
+                padding: EdgeInsets.all(20),
                 child: Column(
                   children: [
-                    Container(height: 100),
-                    Row(
-                      children: [
-                        Container(
-                          child: Text(
-                            "Student Name : $nameStudent",
-                            style: TextStyle(
-                              color: Colors.deepPurpleAccent,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
+                    // Profile Header with Avatar
+                    Container(
+                      margin: EdgeInsets.only(bottom: 30),
+                      child: Column(
+                        children: [
+                          CircleAvatar(
+                            radius: 50,
+                            backgroundColor: Colors.deepPurple[100],
+                            child: Icon(
+                              Icons.person,
+                              size: 50,
+                              color: Colors.deepPurple,
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                    Container(height: 20),
-                    Row(
-                      children: [
-                        Container(
-                          child: Text(
-                            "University : $university",
+                          SizedBox(height: 15),
+                          Text(
+                            nameStudent,
                             style: TextStyle(
-                              color: Colors.deepPurpleAccent,
+                              fontSize: 24,
                               fontWeight: FontWeight.bold,
-                              fontSize: 18,
+                              color: Colors.deepPurple,
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                    Container(height: 20),
-                    Row(
-                      children: [
-                        Container(
-                          child: Text(
-                            "Major : $major",
+                          Text(
+                            "Student",
                             style: TextStyle(
-                              color: Colors.deepPurpleAccent,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
+                              fontSize: 16,
+                              color: Colors.grey[600],
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                    Container(height: 20),
-                    Row(
-                      children: [
-                        Container(
-                          child: Text(
-                            "Email : $email",
-                            style: TextStyle(
-                              color: Colors.deepPurpleAccent,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Container(height: 100),
-                    Custombuttonauth(
-                      title: 'Edit Your Information',
-                      onPressed: () async {
-                        final result = await Navigator.of(
-                          context,
-                        ).pushNamed("editprofile");
 
-                        if (result == true) {
-                          // ✅ إعادة تحميل البيانات بعد التعديل
-                          loadUserData();
-                        }
-                      },
+                    // Profile Details Card
+                    Card(
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.all(20),
+                        child: Column(
+                          children: [
+                            _buildProfileItem(
+                              icon: Icons.school,
+                              title: "University",
+                              value: university,
+                            ),
+                            Divider(height: 30),
+                            _buildProfileItem(
+                              icon: Icons.work,
+                              title: "Major",
+                              value: major,
+                            ),
+                            Divider(height: 30),
+                            _buildProfileItem(
+                              icon: Icons.email,
+                              title: "Email",
+                              value: email,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(height: 30),
+
+                    // Edit Button
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          final result = await Navigator.of(
+                            context,
+                          ).pushNamed("editprofile");
+                          if (result == true) {
+                            loadUserData();
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.deepPurple,
+                          padding: EdgeInsets.symmetric(vertical: 15),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: Text(
+                          'Edit Profile',
+                          style: TextStyle(fontSize: 18, color: Colors.white),
+                        ),
+                      ),
                     ),
                   ],
                 ),
               ),
+    );
+  }
+
+  Widget _buildProfileItem({
+    required IconData icon,
+    required String title,
+    required String value,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, color: Colors.deepPurple, size: 28),
+        SizedBox(width: 15),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+              ),
+              SizedBox(height: 5),
+              Text(
+                value,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
