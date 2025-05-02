@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ViewCVPage extends StatefulWidget {
+  const ViewCVPage({super.key});
+
   @override
   _ViewCVPageState createState() => _ViewCVPageState();
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:internseek/components/custombuttonauth.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -133,25 +132,28 @@ class _ProfileState extends State<Profile> {
                     ),
 
                     SizedBox(height: 30),
-                    ElevatedButton(
-                      onPressed: () async {
-                        final result = await Navigator.of(
-                          context,
-                        ).pushNamed("uploadcv");
-                        if (result == true) {
-                          loadUserData();
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.deepPurple,
-                        padding: EdgeInsets.symmetric(vertical: 15),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          final result = await Navigator.of(
+                            context,
+                          ).pushNamed("uploadcv");
+                          if (result == true) {
+                            loadUserData();
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.deepPurple,
+                          padding: EdgeInsets.symmetric(vertical: 15),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
-                      ),
-                      child: Text(
-                        'Edit Profile',
-                        style: TextStyle(fontSize: 18, color: Colors.white),
+                        child: Text(
+                          'Upload Your CV',
+                          style: TextStyle(fontSize: 18, color: Colors.white),
+                        ),
                       ),
                     ),
                     SizedBox(height: 30),
