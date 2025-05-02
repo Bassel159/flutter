@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class Home extends StatefulWidget {
-  const Home();
+  const Home({super.key});
 
   @override
   State<Home> createState() => _HomeState();

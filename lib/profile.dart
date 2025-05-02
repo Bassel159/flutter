@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:internseek/components/custombuttonauth.dart';
 
 class Profile extends StatefulWidget {
+  const Profile({super.key});
+
   @override
   State<Profile> createState() => _ProfileState();
 }
@@ -131,7 +133,28 @@ class _ProfileState extends State<Profile> {
                     ),
 
                     SizedBox(height: 30),
-
+                    ElevatedButton(
+                      onPressed: () async {
+                        final result = await Navigator.of(
+                          context,
+                        ).pushNamed("uploadcv");
+                        if (result == true) {
+                          loadUserData();
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.deepPurple,
+                        padding: EdgeInsets.symmetric(vertical: 15),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      child: Text(
+                        'Edit Profile',
+                        style: TextStyle(fontSize: 18, color: Colors.white),
+                      ),
+                    ),
+                    SizedBox(height: 30),
                     // Edit Button
                     SizedBox(
                       width: double.infinity,

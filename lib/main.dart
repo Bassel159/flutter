@@ -6,6 +6,8 @@ import 'package:internseek/home.dart';
 import 'package:internseek/editprofile.dart';
 import 'package:internseek/profile.dart';
 import 'package:internseek/settings.dart';
+import 'package:internseek/showcv.dart';
+import 'package:internseek/uploadcv.dart';
 import 'auth/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
@@ -92,6 +94,8 @@ class _MyAppState extends State<MyApp> {
             ),
         "profile": (context) => Profile(),
         "editprofile": (context) => Editprofile(),
+        "uploadcv": (context) => UploadCVPage(),
+        "showcv": (context) => ViewCVPage(),
       },
     );
   }

@@ -4,7 +4,7 @@ class Settings extends StatefulWidget {
   final Function(bool) onToggleTheme;
   late bool isDark;
 
-  Settings({required this.onToggleTheme, required this.isDark});
+  Settings({super.key, required this.onToggleTheme, required this.isDark});
 
   @override
   State<Settings> createState() => _SettingsState();
