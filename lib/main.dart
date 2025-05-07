@@ -2,16 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:internseek/auth/signup.dart';
 import 'package:internseek/categories/add.dart';
+import 'package:internseek/companyProfile/companyHome.dart';
+import 'package:internseek/companyProfile/companyProfile.dart';
 import 'package:internseek/home.dart';
-import 'package:internseek/editprofile.dart';
-import 'package:internseek/profile.dart';
+import 'package:internseek/studentProfile/studentEditProfile.dart';
+import 'package:internseek/studentProfile/studentProfile.dart';
 import 'package:internseek/settings.dart';
-import 'package:internseek/showcv.dart';
-import 'package:internseek/uploadcv.dart';
+import 'package:internseek/studentProfile/viewCV.dart';
+import 'package:internseek/studentProfile/uploadCV.dart';
 import 'auth/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'companyProfile/companySettings.dart';
+import 'companyProfile/editCProfile.dart';
 import 'firebase_options.dart';
 import 'homepage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -77,10 +82,10 @@ class _MyAppState extends State<MyApp> {
       ),
       debugShowCheckedModeBanner: false,
       home:
-          (FirebaseAuth.instance.currentUser != null &&
-                  FirebaseAuth.instance.currentUser!.emailVerified)
-              ? Home()
-              : LogIn(),
+      (FirebaseAuth.instance.currentUser != null &&
+          FirebaseAuth.instance.currentUser!.emailVerified)
+          ? Home()
+          : LogIn(),
       routes: {
         "signup": (context) => SignUp(),
         "login": (context) => LogIn(),
@@ -89,13 +94,21 @@ class _MyAppState extends State<MyApp> {
         "home": (context) => Home(),
         "settings":
             (context) => Settings(
-              isDark: _themeMode == ThemeMode.dark,
-              onToggleTheme: _toggleTheme,
-            ),
-        "profile": (context) => Profile(),
+          isDark: _themeMode == ThemeMode.dark,
+          onToggleTheme: _toggleTheme,
+        ),
+        "profile": (context) => studentProfile(),
         "editprofile": (context) => Editprofile(),
-        "uploadcv": (context) => UploadCVPage(),
-        "showcv": (context) => ViewCVPage(),
+        "uploadcv": (context) => UploadCV(),
+        "showcv": (context) => ViewCV(),
+        "companyprofile": (context) => CompanyProfile(),
+        "companyhome": (context) => CompanyHome(),
+        "editcprofile": (context) => EditCProfile(),
+        "companysettings":
+            (context) => CompanySettings(
+          isDark: _themeMode == ThemeMode.dark,
+          onToggleTheme: _toggleTheme,
+        )
       },
     );
   }

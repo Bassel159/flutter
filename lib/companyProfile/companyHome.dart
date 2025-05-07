@@ -3,16 +3,16 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-class Home extends StatefulWidget {
-  const Home({super.key});
+class CompanyHome extends StatefulWidget {
+  const CompanyHome({super.key});
 
   @override
-  State<Home> createState() => _HomeState();
+  State<CompanyHome> createState() => _CompanyHomeState();
 }
 
-class _HomeState extends State<Home> {
+class _CompanyHomeState extends State<CompanyHome> {
   bool isLoading = true;
-  String studentName = "";
+  String companyName = "";
   String email = "";
 
   void fetchUserData() async {
@@ -21,9 +21,9 @@ class _HomeState extends State<Home> {
       final doc =
       await FirebaseFirestore.instance.collection('users').doc(uid).get();
       final data = doc.data();
-      if (data != null) {
+      if (data != null && mounted) {
         setState(() {
-          studentName = data['studentName'] ?? 'No Name';
+          companyName = data['companyName'] ?? 'No Name';
           email = data['email'] ?? 'No Email';
           isLoading = false;
         });
@@ -50,6 +50,7 @@ class _HomeState extends State<Home> {
         child: Icon(Icons.add),
       ),
       appBar: AppBar(
+        backgroundColor: Color.fromARGB(255, 72, 144, 180),
         title: const Text("Home"),
         /*automaticallyImplyLeading: false,*/
         actions: [
@@ -66,7 +67,7 @@ class _HomeState extends State<Home> {
           padding: EdgeInsets.all(0),
           children: [
             DrawerHeader(
-              decoration: BoxDecoration(color: Colors.purple),
+              decoration: BoxDecoration(color: Color.fromARGB(255, 72, 144, 180)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -74,7 +75,7 @@ class _HomeState extends State<Home> {
                   CircleAvatar(radius: 30, child: Icon(Icons.person, size: 40)),
                   SizedBox(height: 10),
                   Text(
-                    studentName,
+                    companyName,
                     style: TextStyle(color: Colors.white, fontSize: 20),
                   ),
                   Text(
@@ -88,21 +89,21 @@ class _HomeState extends State<Home> {
               leading: Icon(Icons.home),
               title: Text("Home"),
               onTap: () {
-                Navigator.of(context).pushReplacementNamed("home");
+                Navigator.of(context).pushReplacementNamed("companyhome");
               },
             ),
             ListTile(
               leading: Icon(Icons.settings),
               title: Text("Settings"),
               onTap: () {
-                Navigator.of(context).pushNamed("settings");
+                Navigator.of(context).pushNamed("companysettings");
               },
             ),
             ListTile(
               leading: Icon(Icons.person),
               title: Text("Profile"),
               onTap: () {
-                Navigator.of(context).pushNamed("profile");
+                Navigator.of(context).pushNamed("companyprofile");
               },
             ),
             ListTile(

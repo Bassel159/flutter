@@ -3,14 +3,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class ViewCVPage extends StatefulWidget {
-  const ViewCVPage({super.key});
+class ViewCV extends StatefulWidget {
+  const ViewCV({super.key});
 
   @override
-  _ViewCVPageState createState() => _ViewCVPageState();
+  _ViewCVState createState() => _ViewCVState();
 }
 
-class _ViewCVPageState extends State<ViewCVPage> {
+class _ViewCVState extends State<ViewCV> {
   String? cvUrl;
   bool isLoading = true;
 

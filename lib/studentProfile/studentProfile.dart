@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Profile extends StatefulWidget {
-  const Profile({super.key});
+class studentProfile extends StatefulWidget {
+  const studentProfile({super.key});
 
   @override
-  State<Profile> createState() => _ProfileState();
+  State<studentProfile> createState() => _studentProfileState();
 }
 
-class _ProfileState extends State<Profile> {
+class _studentProfileState extends State<studentProfile> {
   final uid = FirebaseAuth.instance.currentUser?.uid;
 
   String nameStudent = "";

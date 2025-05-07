@@ -7,14 +7,14 @@ import 'dart:io';
 
 import 'package:url_launcher/url_launcher.dart';
 
-class UploadCVPage extends StatefulWidget {
-  const UploadCVPage({super.key});
+class UploadCV extends StatefulWidget {
+  const UploadCV({super.key});
 
   @override
-  _UploadCVPageState createState() => _UploadCVPageState();
+  _UploadCVState createState() => _UploadCVState();
 }
 
-class _UploadCVPageState extends State<UploadCVPage> {
+class _UploadCVState extends State<UploadCV> {
   String? _statusMessage;
   String? cvUrl;
   bool isLoading = true;

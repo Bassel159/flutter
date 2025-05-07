@@ -1,7 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-
 import '../components/customformfield.dart';
 import '../components/customlogoauth.dart';
 import '../components/custombuttonauth.dart';
@@ -166,61 +166,91 @@ class _LogInState extends State<LogIn> {
                         ],
                       ),
                     ),
-                    Custombuttonauth(
-                      title: "Login",
-                      onPressed: () async {
-                        if (formState.currentState!.validate()) {
-                          try {
-                            isLoading = true;
-                            setState(() {});
-                            final credential = await FirebaseAuth.instance
-                                .signInWithEmailAndPassword(
-                                  email: email.text,
-                                  password: password.text,
-                                );
-                            isLoading = false;
-                            setState(() {});
-                            if (credential.user!.emailVerified) {
-                              Navigator.of(
-                                context,
-                              ).pushReplacementNamed("home");
-                            } else {
-                              showDialog(
-                                context: context,
-                                barrierDismissible: false,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: Text("Email Not Verified"),
-                                    content: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.purple,
-                                        foregroundColor: Colors.white,
-                                      ),
-                                      onPressed: () {
-                                        FirebaseAuth.instance.currentUser!
-                                            .sendEmailVerification();
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: Text("Send Verification Email"),
-                                    ),
-                                  );
-                                },
-                              );
-                            }
-                          } on FirebaseAuthException catch (e) {
-                            isLoading = false;
-                            setState(() {});
-                            if (e.code == 'user-not-found') {
-                              print('No user found for that email.');
-                            } else if (e.code == 'wrong-password') {
-                              print('Wrong password provided for that user.');
-                            }
+              Custombuttonauth(
+                title: "Login",
+                onPressed: () async {
+                  if (formState.currentState!.validate()) {
+                    try {
+                      isLoading = true;
+                      setState(() {});
+
+                      // Sign in with email and password
+                      final credential = await FirebaseAuth.instance
+                          .signInWithEmailAndPassword(
+                        email: email.text,
+                        password: password.text,
+                      );
+
+                      isLoading = false;
+                      setState(() {});
+
+                      // Check if the user's email is verified
+                      if (credential.user!.emailVerified) {
+                        final uid = credential.user!.uid;
+
+                        // Fetch user document from Firestore
+                        final userDoc = await FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(uid)
+                            .get();
+
+                        if (userDoc.exists) {
+                          final userData = userDoc.data();
+
+                          // Read the userType field to determine the user role
+                          final userType = userData?['userType'];
+
+                          // Navigate to the appropriate home based on userType
+                          if (userType == 'Company') {
+                            Navigator.of(context).pushReplacementNamed("companyhome");
+                          } else {
+                            Navigator.of(context).pushReplacementNamed("home");
                           }
                         } else {
-                          print("Enter smth");
+                          // Show error if user document not found
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text("User data not found in database")),
+                          );
                         }
-                      },
-                    ),
+                      } else {
+                        // If email is not verified, show dialog to verify
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text("Email Not Verified"),
+                              content: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.purple,
+                                  foregroundColor: Colors.white,
+                                ),
+                                onPressed: () {
+                                  FirebaseAuth.instance.currentUser!
+                                      .sendEmailVerification();
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text("Send Verification Email"),
+                              ),
+                            );
+                          },
+                        );
+                      }
+                    } on FirebaseAuthException catch (e) {
+                      isLoading = false;
+                      setState(() {});
+                      if (e.code == 'user-not-found') {
+                        print('No user found for that email.');
+                      } else if (e.code == 'wrong-password') {
+                        print('Wrong password provided for that user.');
+                      }
+                    }
+                  } else {
+                    print("Enter smth");
+                  }
+                },
+              ),
+
                     Container(height: 20),
                     Text("OR", textAlign: TextAlign.center),
                     Container(height: 10),
