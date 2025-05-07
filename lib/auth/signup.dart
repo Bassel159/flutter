@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
 import '../components/customformfield.dart';
 import '../components/customlogoauth.dart';
 import '../components/custombuttonauth.dart';
@@ -15,22 +14,21 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends State<SignUp> {
   String userType = 'Student';
-  // For All
+
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
-  // For student
+
   TextEditingController studentName = TextEditingController();
   TextEditingController university = TextEditingController();
   TextEditingController major = TextEditingController();
-  // For company
+
   TextEditingController companyName = TextEditingController();
   TextEditingController industry = TextEditingController();
 
   GlobalKey<FormState> formState = GlobalKey<FormState>();
-  // Disposing controllers
+
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     studentName.dispose();
     email.dispose();
@@ -53,20 +51,19 @@ class _SignUpState extends State<SignUp> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(height: 50),
+                  SizedBox(height: 50),
                   Customlogoauth(),
-                  Container(height: 20),
+                  SizedBox(height: 20),
                   Text(
                     "SignUp",
                     style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                   ),
-                  Container(height: 10),
+                  SizedBox(height: 10),
                   Text(
                     "SignUp to continue",
                     style: TextStyle(color: Colors.grey),
                   ),
-                  Container(height: 20),
-                  //Dropdownbutton
+                  SizedBox(height: 20),
                   Text(
                     "Account Type",
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
@@ -84,144 +81,82 @@ class _SignUpState extends State<SignUp> {
                       isExpanded: true,
                       underline: SizedBox(),
                       items:
-                          ['Student', 'Company'].map((type) {
-                            return DropdownMenuItem(
-                              value: type,
-                              child: Text(type), // Text in the dropdown
-                            );
-                          }).toList(),
+                      ['Student', 'Company'].map((type) {
+                        return DropdownMenuItem(
+                          value: type,
+                          child: Text(type),
+                        );
+                      }).toList(),
                       onChanged: (val) {
                         setState(() {
-                          userType = val!; // Update the userType when changed
+                          userType = val!;
                         });
                       },
                     ),
                   ),
                   SizedBox(height: 20),
-                  // Student. . . . .
+
+                  // Student Fields
                   if (userType == 'Student') ...[
-                    Text(
-                      "Student Name",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
-                    Container(height: 20),
+                    _buildLabel("Student Name"),
                     CustomTextForm(
                       hinttext: "Enter your Name",
                       mycontroller: studentName,
-                      validator: (val) {
-                        if (val == "") return "Enter something";
-                        return null;
-                      },
+                      validator:
+                          (val) => val!.isEmpty ? "Enter something" : null,
                     ),
-                    Container(height: 20),
-                    Text(
-                      "University",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
-                    Container(height: 20),
+                    SizedBox(height: 20),
+                    _buildLabel("University"),
                     CustomTextForm(
                       hinttext: "Enter your University",
                       mycontroller: university,
-                      validator: (val) {
-                        if (val == "") return "Enter something";
-                        return null;
-                      },
+                      validator:
+                          (val) => val!.isEmpty ? "Enter something" : null,
                     ),
-                    Container(height: 20),
-                    Text(
-                      "Major",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
-                    Container(height: 20),
+                    SizedBox(height: 20),
+                    _buildLabel("Major"),
                     CustomTextForm(
                       hinttext: "Enter your Major",
                       mycontroller: major,
-                      validator: (val) {
-                        if (val == "") return "Enter something";
-                        return null;
-                      },
-                    ),
-                  ],
-                  // Company. . . . .
-                  if (userType == 'Company') ...[
-                    Text(
-                      "Company Name",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
-                    Container(height: 20),
-                    CustomTextForm(
-                      hinttext: "Enter your Company Name",
-                      mycontroller: companyName,
-                      validator: (val) {
-                        if (val == "") return "Enter something";
-                        return null;
-                      },
-                    ),
-                    Container(height: 20),
-                    Text(
-                      "Industry",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
-                    Container(height: 20),
-                    CustomTextForm(
-                      hinttext: "Enter your Industry",
-                      mycontroller: industry,
-                      validator: (val) {
-                        if (val == "") return "Enter something";
-                        return null;
-                      },
+                      validator:
+                          (val) => val!.isEmpty ? "Enter something" : null,
                     ),
                   ],
 
-                  // Email and Password fields
-                  Container(height: 20),
-                  Text(
-                    "Email",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                  ),
-                  Container(height: 20),
+                  // Company Fields
+                  if (userType == 'Company') ...[
+                    _buildLabel("Company Name"),
+                    CustomTextForm(
+                      hinttext: "Enter your Company Name",
+                      mycontroller: companyName,
+                      validator:
+                          (val) => val!.isEmpty ? "Enter something" : null,
+                    ),
+                    SizedBox(height: 20),
+                    _buildLabel("Industry"),
+                    CustomTextForm(
+                      hinttext: "Enter your Industry",
+                      mycontroller: industry,
+                      validator:
+                          (val) => val!.isEmpty ? "Enter something" : null,
+                    ),
+                  ],
+
+                  SizedBox(height: 20),
+                  _buildLabel("Email"),
                   CustomTextForm(
                     hinttext: "Enter your Email",
                     mycontroller: email,
-                    validator: (val) {
-                      if (val == "") {
-                        return "Enter something";
-                      }
-                      return null;
-                    },
+                    validator: (val) => val!.isEmpty ? "Enter something" : null,
                   ),
-                  Container(height: 20),
-                  Text(
-                    "Password",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                  ),
-                  Container(height: 20),
+                  SizedBox(height: 20),
+                  _buildLabel("Password"),
                   CustomTextForm(
                     hinttext: "Enter your Password",
                     mycontroller: password,
-                    validator: (val) {
-                      if (val == "") {
-                        return "Enter something";
-                      }
-                      return null;
-                    },
+                    validator: (val) => val!.isEmpty ? "Enter something" : null,
                   ),
-                  Container(height: 20),
+                  SizedBox(height: 20),
                 ],
               ),
             ),
@@ -232,31 +167,35 @@ class _SignUpState extends State<SignUp> {
                   try {
                     final credential = await FirebaseAuth.instance
                         .createUserWithEmailAndPassword(
-                          email: email.text,
-                          password: password.text,
-                        );
-                    // Send User Information to Firebase
+                      email: email.text,
+                      password: password.text,
+                    );
+
                     await FirebaseFirestore.instance
                         .collection('users')
                         .doc(credential.user!.uid)
                         .set({
-                          'email': email.text,
-                          'userType': userType,
-                          if (userType == 'Student') ...{
-                            'studentName': studentName.text,
-                            'university': university.text,
-                            'major': major.text,
-                            'companyName': null,
-                            'industry': null,
-                          } else ...{
-                            'studentName': null,
-                            'university': null,
-                            'major': null,
-                            'companyName': companyName.text,
-                            'industry': industry.text,
-                          },
-                        });
-                    // Navigate to Login and catch errors
+                      'email': email.text,
+                      'userType': userType,
+                      if (userType == 'Student') ...{
+                        'studentName': studentName.text,
+                        'university': university.text,
+                        'major': major.text,
+                        'companyName': null,
+                        'industry': null,
+                        'requestedCompany': false,
+                        'isApproved': false,
+                      } else ...{
+                        'studentName': null,
+                        'university': null,
+                        'major': null,
+                        'companyName': companyName.text,
+                        'industry': industry.text,
+                        'requestedCompany': true,
+                        'isApproved': false, // وضع القيمة الافتراضية هنا
+                      },
+                    });
+
                     Navigator.of(context).pushReplacementNamed("login");
                   } on FirebaseAuthException catch (e) {
                     if (e.code == 'weak-password') {
@@ -270,7 +209,7 @@ class _SignUpState extends State<SignUp> {
                 }
               },
             ),
-            Container(height: 20),
+            SizedBox(height: 20),
             InkWell(
               onTap: () {
                 Navigator.of(context).pushNamed("login");
@@ -292,6 +231,19 @@ class _SignUpState extends State<SignUp> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildLabel(String title) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        ),
+        SizedBox(height: 10),
+      ],
     );
   }
 }

@@ -20,9 +20,15 @@ class _studentProfileState extends State<studentProfile> {
 
   Future<void> loadUserData() async {
     try {
-      final doc =
-          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+
+      if (uid == null) {
+        throw Exception("User not logged in");
+      }
+
+      final doc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
       final data = doc.data();
+
       if (data != null) {
         setState(() {
           nameStudent = data['studentName'] ?? '';
@@ -31,14 +37,16 @@ class _studentProfileState extends State<studentProfile> {
           email = data['email'] ?? '';
           isLoading = false;
         });
+      } else {
+        throw Exception("User data not found");
       }
     } catch (e) {
       setState(() {
         isLoading = false;
       });
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error loading profile: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error loading profile: $e')),
+      );
     }
   }
 

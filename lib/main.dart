@@ -6,6 +6,7 @@ import 'package:internseek/companyProfile/adminHome.dart';
 import 'package:internseek/companyProfile/companyHome.dart';
 import 'package:internseek/companyProfile/companyProfile.dart';
 import 'package:internseek/home.dart';
+import 'package:internseek/studentProfile/enterInfo.dart';
 import 'package:internseek/studentProfile/studentEditProfile.dart';
 import 'package:internseek/studentProfile/studentProfile.dart';
 import 'package:internseek/settings.dart';
@@ -111,6 +112,7 @@ class _MyAppState extends State<MyApp> {
           onToggleTheme: _toggleTheme,
         ),
         "adminhome": (context) => adminHome(),
+        "enterinfo": (context) => EnterInfo(),
       },
     );
   }
