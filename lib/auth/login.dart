@@ -202,9 +202,12 @@ class _LogInState extends State<LogIn> {
 
                           // Navigate to the appropriate home based on userType
                           if (userType == 'Company') {
-                            Navigator.of(context).pushReplacementNamed("companyhome");
-                          } else {
-                            Navigator.of(context).pushReplacementNamed("home");
+                            Navigator.of(context).pushReplacementNamed("companyhome");//Company
+                          } else if(userType == 'Admin'){
+                            Navigator.of(context).pushReplacementNamed("adminhome");//Admin
+                          }
+                          else {
+                            Navigator.of(context).pushReplacementNamed("home");//Student/Other
                           }
                         } else {
                           // Show error if user document not found

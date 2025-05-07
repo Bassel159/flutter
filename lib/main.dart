@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:internseek/auth/signup.dart';
 import 'package:internseek/categories/add.dart';
+import 'package:internseek/companyProfile/adminHome.dart';
 import 'package:internseek/companyProfile/companyHome.dart';
 import 'package:internseek/companyProfile/companyProfile.dart';
 import 'package:internseek/home.dart';
@@ -108,7 +109,8 @@ class _MyAppState extends State<MyApp> {
             (context) => CompanySettings(
           isDark: _themeMode == ThemeMode.dark,
           onToggleTheme: _toggleTheme,
-        )
+        ),
+        "adminhome": (context) => adminHome(),
       },
     );
   }
