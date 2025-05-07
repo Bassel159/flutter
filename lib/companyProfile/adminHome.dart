@@ -12,7 +12,7 @@ class adminHome extends StatefulWidget {
 
 class _adminHomeState extends State<adminHome> {
   bool isLoading = false;
-  String selectedFilter = 'الكل';
+  String selectedFilter = 'All';
 
   void approveCompany(String userId) async {
     await FirebaseFirestore.instance.collection('users').doc(userId).update({
@@ -34,14 +34,14 @@ class _adminHomeState extends State<adminHome> {
   bool shouldDisplay(DocumentSnapshot doc) {
     final isApproved = doc['isApproved'];
     switch (selectedFilter) {
-      case 'مقبولة':
+      case 'Approved':
         return isApproved == true;
-      case 'مرفوضة':
+      case 'Rejected':
         return isApproved == false;
-      case 'غير محددة':
+      case 'Pending':
         return isApproved == null;
       default:
-        return true; // الكل
+        return true; // All
     }
   }
 
@@ -50,37 +50,32 @@ class _adminHomeState extends State<adminHome> {
     required String userId,
     required bool isApprove,
   }) {
-    String title = isApprove ? 'تأكيد القبول' : 'تأكيد الرفض';
+    String title = isApprove ? 'Confirm Approval' : 'Confirm Rejection';
     String message =
-    isApprove
-        ? 'هل أنت متأكد من قبول الشركة؟'
-        : 'هل أنت متأكد من رفض الشركة؟';
+    isApprove ? 'Are you sure you want to approve this company?' : 'Are you sure you want to reject this company?';
 
     showDialog(
       context: context,
-      builder:
-          (_) => AlertDialog(
+      builder: (_) => AlertDialog(
         title: Text(title),
         content: Text(message),
         actions: [
           TextButton(
-            child: const Text('إلغاء'),
+            child: const Text('Cancel'),
             onPressed: () => Navigator.of(context).pop(),
           ),
           TextButton(
-            child: const Text('نعم'),
+            child: const Text('Yes'),
             onPressed: () async {
               Navigator.of(context).pop();
               if (isApprove) {
                 approveCompany(userId);
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(SnackBar(content: Text('تم قبول الشركة')));
+                ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Company approved')));
               } else {
                 rejectCompany(userId);
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(SnackBar(content: Text('تم رفض الشركة')));
+                ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Company rejected')));
               }
             },
           ),
@@ -95,12 +90,12 @@ class _adminHomeState extends State<adminHome> {
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         backgroundColor: Colors.red,
-        title: const Text("لوحة تحكم الأدمن"),
+        title: const Text("Admin Dashboard"),
         actions: [
           IconButton(
             icon: Icon(Icons.refresh),
             onPressed: refreshPage,
-            tooltip: 'تحديث',
+            tooltip: 'Refresh',
           ),
         ],
       ),
@@ -143,16 +138,14 @@ class _adminHomeState extends State<adminHome> {
                 GoogleSignIn googleSignIn = GoogleSignIn();
                 googleSignIn.disconnect();
                 await FirebaseAuth.instance.signOut();
-                Navigator.of(
-                  context,
-                ).pushNamedAndRemoveUntil("login", (route) => false);
+                Navigator.of(context)
+                    .pushNamedAndRemoveUntil("login", (route) => false);
               },
             ),
           ],
         ),
       ),
-      body:
-      isLoading
+      body: isLoading
           ? Center(child: CircularProgressIndicator())
           : Column(
         children: [
@@ -160,8 +153,7 @@ class _adminHomeState extends State<adminHome> {
             padding: const EdgeInsets.all(10.0),
             child: DropdownButtonFormField<String>(
               value: selectedFilter,
-              items:
-              ['الكل', 'مقبولة', 'مرفوضة', 'غير محددة']
+              items: ['All', 'Approved', 'Rejected', 'Pending']
                   .map(
                     (label) => DropdownMenuItem(
                   value: label,
@@ -177,27 +169,25 @@ class _adminHomeState extends State<adminHome> {
                 }
               },
               decoration: InputDecoration(
-                labelText: "تصفية حسب الحالة",
+                labelText: "Filter by Status",
                 border: OutlineInputBorder(),
               ),
             ),
           ),
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
-              stream:
-              FirebaseFirestore.instance
+              stream: FirebaseFirestore.instance
                   .collection('users')
                   .where('userType', isEqualTo: 'Company')
                   .where('requestedCompany', isEqualTo: true)
                   .snapshots(),
               builder: (context, snapshot) {
-                if (snapshot.connectionState ==
-                    ConnectionState.waiting) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
                 }
 
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return Center(child: Text('لا توجد طلبات حالياً'));
+                  return Center(child: Text('No requests currently'));
                 }
 
                 final requests =
@@ -205,7 +195,7 @@ class _adminHomeState extends State<adminHome> {
 
                 if (requests.isEmpty) {
                   return Center(
-                    child: Text('لا توجد طلبات حسب الفلتر المحدد'),
+                    child: Text('No requests matching selected filter'),
                   );
                 }
 
@@ -214,17 +204,17 @@ class _adminHomeState extends State<adminHome> {
                   itemCount: requests.length,
                   itemBuilder: (context, index) {
                     final user = requests[index];
-                    final name = user['companyName'] ?? 'بدون اسم';
-                    final email = user['email'] ?? 'بدون بريد';
+                    final name = user['companyName'] ?? 'No Name';
+                    final email = user['email'] ?? 'No Email';
                     final isApproved = user['isApproved'];
 
                     String statusText;
                     if (isApproved == true) {
-                      statusText = 'الحالة: مقبولة ✅';
+                      statusText = 'Status: Approved ✅';
                     } else if (isApproved == false) {
-                      statusText = 'الحالة: مرفوضة ❌';
+                      statusText = 'Status: Rejected ❌';
                     } else {
-                      statusText = 'الحالة: غير محددة';
+                      statusText = 'Status: Pending';
                     }
 
                     return Card(
@@ -237,9 +227,8 @@ class _adminHomeState extends State<adminHome> {
                             Text(email),
                             Text(
                               statusText,
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style:
+                              TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
@@ -259,15 +248,14 @@ class _adminHomeState extends State<adminHome> {
                               );
                             }
                           },
-                          itemBuilder:
-                              (context) => [
+                          itemBuilder: (context) => [
                             PopupMenuItem(
                               value: 'approve',
-                              child: Text('قبول'),
+                              child: Text('Approve'),
                             ),
                             PopupMenuItem(
                               value: 'reject',
-                              child: Text('رفض'),
+                              child: Text('Reject'),
                             ),
                           ],
                         ),

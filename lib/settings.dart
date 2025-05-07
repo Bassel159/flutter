@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
-class Settings extends StatefulWidget {
+class Setting extends StatefulWidget {
   final Function(bool) onToggleTheme;
   late bool isDark;
 
-  Settings({super.key, required this.onToggleTheme, required this.isDark});
+  Setting({super.key, required this.onToggleTheme, required this.isDark});
 
   @override
-  State<Settings> createState() => _SettingsState();
+  State<Setting> createState() => _SettingState();
 }
 
-class _SettingsState extends State<Settings> {
+class _SettingState extends State<Setting> {
   bool _isDark = false;
   bool _notificationEnabled = true;
   @override

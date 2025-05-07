@@ -140,15 +140,33 @@ class _LogInState extends State<LogIn> {
                     ),
                   ),
                   Container(height: 20),
-                  CustomTextForm(
-                    hinttext: "Enter your Password",
-                    mycontroller: password,
+                  TextFormField( //Password textformfield//
+                    controller: password,
                     validator: (val) {
                       if (val == "") {
                         return "Enter something";
                       }
                       return null;
                     },
+                    obscureText: true, // This will hide the text (for password)
+                    decoration: InputDecoration(
+                      hintText: "Enter your Password",
+                      hintStyle: TextStyle(
+                        fontSize: 14,
+                        color: const Color.fromARGB(255, 39, 39, 39),
+                      ),
+                      contentPadding: EdgeInsets.symmetric(vertical: 2, horizontal: 20),
+                      filled: true,
+                      fillColor: Colors.grey[200],
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(50),
+                        borderSide: BorderSide(color: Colors.grey),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(50),
+                        borderSide: BorderSide(color: Colors.grey),
+                      ),
+                    ),
                   ),
                   InkWell(
                     onTap: () {

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:internseek/auth/signup.dart';
@@ -83,11 +84,45 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
       debugShowCheckedModeBanner: false,
-      home:
-      (FirebaseAuth.instance.currentUser != null &&
-          FirebaseAuth.instance.currentUser!.emailVerified)
-          ? Home()
-          : LogIn(),
+      home: FutureBuilder(
+        future: Firebase.initializeApp(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else {
+            final user = FirebaseAuth.instance.currentUser;
+            if (user != null && user.emailVerified) {
+              return FutureBuilder<DocumentSnapshot>(
+                future: FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(user.uid)
+                    .get(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (!snapshot.hasData || !snapshot.data!.exists) {
+                    return LogIn(); // fallback
+                  }
+
+                  final data = snapshot.data!.data() as Map<String, dynamic>;
+                  final userType = data['userType'];
+
+                  if (userType == 'Company') {
+                    return CompanyHome(); // replace with your actual widget
+                  } else if (userType == 'Admin') {
+                    return adminHome(); // replace with your actual widget
+                  } else {
+                    return Home();
+                  }
+                },
+              );
+            } else {
+              return LogIn();
+            }
+          }
+        },
+      ),
       routes: {
         "signup": (context) => SignUp(),
         "login": (context) => LogIn(),
@@ -95,7 +130,7 @@ class _MyAppState extends State<MyApp> {
         "addcategory": (context) => AddCategory(),
         "home": (context) => Home(),
         "settings":
-            (context) => Settings(
+            (context) => Setting(
           isDark: _themeMode == ThemeMode.dark,
           onToggleTheme: _toggleTheme,
         ),
