@@ -18,6 +18,7 @@ class _UploadCVState extends State<UploadCV> {
   String? _statusMessage;
   String? cvUrl;
   bool isLoading = true;
+  @override
   void initState() {
     super.initState();
     fetchCVUrl();

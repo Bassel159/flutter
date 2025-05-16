@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:internseek/ApplicationsPage.dart';
 import 'package:internseek/auth/signup.dart';
 import 'package:internseek/categories/add.dart';
 import 'package:internseek/companyProfile/adminHome.dart';
@@ -19,7 +20,6 @@ import 'companyProfile/companySettings.dart';
 import 'companyProfile/editCProfile.dart';
 import 'firebase_options.dart';
 import 'homepage.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -93,10 +93,11 @@ class _MyAppState extends State<MyApp> {
             final user = FirebaseAuth.instance.currentUser;
             if (user != null && user.emailVerified) {
               return FutureBuilder<DocumentSnapshot>(
-                future: FirebaseFirestore.instance
-                    .collection('users')
-                    .doc(user.uid)
-                    .get(),
+                future:
+                    FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(user.uid)
+                        .get(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
@@ -131,9 +132,9 @@ class _MyAppState extends State<MyApp> {
         "home": (context) => Home(),
         "settings":
             (context) => Setting(
-          isDark: _themeMode == ThemeMode.dark,
-          onToggleTheme: _toggleTheme,
-        ),
+              isDark: _themeMode == ThemeMode.dark,
+              onToggleTheme: _toggleTheme,
+            ),
         "profile": (context) => studentProfile(),
         "editprofile": (context) => Editprofile(),
         "uploadcv": (context) => UploadCV(),
@@ -143,11 +144,12 @@ class _MyAppState extends State<MyApp> {
         "editcprofile": (context) => EditCProfile(),
         "companysettings":
             (context) => CompanySettings(
-          isDark: _themeMode == ThemeMode.dark,
-          onToggleTheme: _toggleTheme,
-        ),
+              isDark: _themeMode == ThemeMode.dark,
+              onToggleTheme: _toggleTheme,
+            ),
         "adminhome": (context) => adminHome(),
         "enterinfo": (context) => EnterInfo(),
+        'applications': (context) => ApplicationsPage(),
       },
     );
   }
