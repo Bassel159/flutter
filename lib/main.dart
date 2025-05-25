@@ -20,11 +20,25 @@ import 'companyProfile/companySettings.dart';
 import 'companyProfile/editCProfile.dart';
 import 'firebase_options.dart';
 import 'homepage.dart';
+import 'components/theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
+}
+
+ThemeData getThemeForUserType(String userType, bool isDarkMode) {
+  switch (userType.toLowerCase()) {
+    case 'admin':
+      return getAdminTheme(isDarkMode);
+    case 'student':
+      return getStudentTheme(isDarkMode);
+    case 'company':
+      return getCompanyTheme(isDarkMode);
+    default:
+      return isDarkMode ? ThemeData.dark() : ThemeData.light();
+  }
 }
 
 class MyApp extends StatefulWidget {
@@ -61,6 +75,7 @@ class _MyAppState extends State<MyApp> {
       themeMode: _themeMode,
       theme: ThemeData(
         brightness: Brightness.light,
+        primarySwatch: Colors.purple,
         appBarTheme: AppBarTheme(
           backgroundColor: Colors.purple,
           titleTextStyle: TextStyle(
@@ -73,6 +88,7 @@ class _MyAppState extends State<MyApp> {
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
+        primarySwatch: Colors.purple,
         appBarTheme: AppBarTheme(
           backgroundColor: Colors.grey[900],
           titleTextStyle: TextStyle(
@@ -103,18 +119,18 @@ class _MyAppState extends State<MyApp> {
                     return const Center(child: CircularProgressIndicator());
                   }
                   if (!snapshot.hasData || !snapshot.data!.exists) {
-                    return LogIn(); // fallback
+                    return LogIn(); // fallback if user doc missing
                   }
 
                   final data = snapshot.data!.data() as Map<String, dynamic>;
-                  final userType = data['userType'];
+                  final userType = data['userType'] ?? 'Student';
 
                   if (userType == 'Company') {
-                    return CompanyHome(); // replace with your actual widget
+                    return const CompanyHome();
                   } else if (userType == 'Admin') {
-                    return adminHome(); // replace with your actual widget
+                    return const adminHome();
                   } else {
-                    return Home();
+                    return Home(userType: userType);
                   }
                 },
               );
@@ -129,7 +145,7 @@ class _MyAppState extends State<MyApp> {
         "login": (context) => LogIn(),
         "homepage": (context) => HomePage(),
         "addcategory": (context) => AddCategory(),
-        "home": (context) => Home(),
+        "home": (context) => Home(userType: 'Student'), // مثال تمرير userType
         "settings":
             (context) => Setting(
               isDark: _themeMode == ThemeMode.dark,

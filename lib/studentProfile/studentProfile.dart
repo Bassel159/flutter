@@ -16,6 +16,10 @@ class _studentProfileState extends State<studentProfile> {
   String major = "";
   String university = "";
   String email = "";
+  String gpa = "";
+  String yearofstudy = "";
+  String expectedgrad = "";
+  String prefindustry = "";
   bool isLoading = true;
 
   Future<void> loadUserData() async {
@@ -26,7 +30,8 @@ class _studentProfileState extends State<studentProfile> {
         throw Exception("User not logged in");
       }
 
-      final doc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      final doc =
+          await FirebaseFirestore.instance.collection('users').doc(uid).get();
       final data = doc.data();
 
       if (data != null) {
@@ -35,6 +40,10 @@ class _studentProfileState extends State<studentProfile> {
           major = data['major'] ?? '';
           university = data['university'] ?? '';
           email = data['email'] ?? '';
+          gpa = data['gpa'] ?? '';
+          yearofstudy = data['yearofstudy'] ?? '';
+          expectedgrad = data['expectedgrad'] ?? '';
+          prefindustry = data['preferredindustry'] ?? '';
           isLoading = false;
         });
       } else {
@@ -44,9 +53,9 @@ class _studentProfileState extends State<studentProfile> {
       setState(() {
         isLoading = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error loading profile: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error loading profile: $e')));
     }
   }
 
@@ -133,6 +142,30 @@ class _studentProfileState extends State<studentProfile> {
                               icon: Icons.email,
                               title: "Email",
                               value: email,
+                            ),
+                            Divider(height: 30),
+                            _buildProfileItem(
+                              icon: Icons.star,
+                              title: "GPA",
+                              value: gpa,
+                            ),
+                            Divider(height: 30),
+                            _buildProfileItem(
+                              icon: Icons.library_books,
+                              title: "Year of Study",
+                              value: yearofstudy,
+                            ),
+                            Divider(height: 30),
+                            _buildProfileItem(
+                              icon: Icons.calendar_today,
+                              title: "Expected Graduation",
+                              value: expectedgrad,
+                            ),
+                            Divider(height: 30),
+                            _buildProfileItem(
+                              icon: Icons.work,
+                              title: "Preferred Industry",
+                              value: prefindustry,
                             ),
                           ],
                         ),

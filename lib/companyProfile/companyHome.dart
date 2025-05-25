@@ -144,7 +144,9 @@ class _CompanyHomeState extends State<CompanyHome> {
                       .doc(appId)
                       .update({
                         'status': 'Accepted',
-                        'interviewDate': interviewDateTime,
+                        'interviewDate': Timestamp.fromDate(
+                          interviewDateTime.toUtc(),
+                        ),
                       });
 
                   final appDoc =
@@ -244,13 +246,14 @@ class _CompanyHomeState extends State<CompanyHome> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color.fromARGB(255, 72, 144, 180),
-        foregroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+
         onPressed: () {},
         child: Icon(Icons.add),
       ),
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 72, 144, 180),
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         title: const Text("Home"),
         actions: [
           IconButton(onPressed: () {}, icon: Icon(Icons.notifications)),
@@ -262,7 +265,7 @@ class _CompanyHomeState extends State<CompanyHome> {
           children: [
             DrawerHeader(
               decoration: BoxDecoration(
-                color: Color.fromARGB(255, 72, 144, 180),
+                color: Theme.of(context).appBarTheme.backgroundColor,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -272,11 +275,17 @@ class _CompanyHomeState extends State<CompanyHome> {
                   SizedBox(height: 10),
                   Text(
                     companyName,
-                    style: TextStyle(color: Colors.white, fontSize: 20),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onPrimary,
+                      fontSize: 20,
+                    ),
                   ),
                   Text(
                     email,
-                    style: TextStyle(color: Colors.white, fontSize: 20),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onPrimary,
+                      fontSize: 20,
+                    ),
                   ),
                 ],
               ),
@@ -392,7 +401,11 @@ class _CompanyHomeState extends State<CompanyHome> {
                               ),
                               if (status == 'pending' || status == 'rejected')
                                 IconButton(
-                                  icon: Icon(Icons.check, color: Colors.green),
+                                  icon: Icon(
+                                    Icons.check,
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
+                                  ),
                                   onPressed:
                                       () => acceptApplicationWithInterview(
                                         app['applicationId'],
@@ -401,7 +414,11 @@ class _CompanyHomeState extends State<CompanyHome> {
                                 ),
                               if (status == 'pending' || status == 'accepted')
                                 IconButton(
-                                  icon: Icon(Icons.close, color: Colors.red),
+                                  icon: Icon(
+                                    Icons.close,
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
+                                  ),
                                   onPressed:
                                       () => updateApplicationStatus(
                                         app['applicationId'],
@@ -419,7 +436,10 @@ class _CompanyHomeState extends State<CompanyHome> {
                               status[0].toUpperCase() + status.substring(1),
                             ),
                             backgroundColor: statusColor(status),
-                            labelStyle: TextStyle(color: Colors.white),
+                            labelStyle: Theme.of(context)
+                                .primaryTextTheme
+                                .labelLarge
+                                ?.copyWith(color: Colors.white),
                           ),
                         ],
                       ),

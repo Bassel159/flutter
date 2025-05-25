@@ -52,35 +52,40 @@ class _adminHomeState extends State<adminHome> {
   }) {
     String title = isApprove ? 'Confirm Approval' : 'Confirm Rejection';
     String message =
-    isApprove ? 'Are you sure you want to approve this company?' : 'Are you sure you want to reject this company?';
+        isApprove
+            ? 'Are you sure you want to approve this company?'
+            : 'Are you sure you want to reject this company?';
 
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
-        title: Text(title),
-        content: Text(message),
-        actions: [
-          TextButton(
-            child: const Text('Cancel'),
-            onPressed: () => Navigator.of(context).pop(),
+      builder:
+          (_) => AlertDialog(
+            title: Text(title),
+            content: Text(message),
+            actions: [
+              TextButton(
+                child: const Text('Cancel'),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              TextButton(
+                child: const Text('Yes'),
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                  if (isApprove) {
+                    approveCompany(userId);
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text('Company approved')));
+                  } else {
+                    rejectCompany(userId);
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text('Company rejected')));
+                  }
+                },
+              ),
+            ],
           ),
-          TextButton(
-            child: const Text('Yes'),
-            onPressed: () async {
-              Navigator.of(context).pop();
-              if (isApprove) {
-                approveCompany(userId);
-                ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Company approved')));
-              } else {
-                rejectCompany(userId);
-                ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Company rejected')));
-              }
-            },
-          ),
-        ],
-      ),
     );
   }
 
@@ -89,7 +94,7 @@ class _adminHomeState extends State<adminHome> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: Colors.red,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         title: const Text("Admin Dashboard"),
         actions: [
           IconButton(
@@ -104,7 +109,9 @@ class _adminHomeState extends State<adminHome> {
           padding: EdgeInsets.all(0),
           children: [
             DrawerHeader(
-              decoration: BoxDecoration(color: Colors.red),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -112,7 +119,9 @@ class _adminHomeState extends State<adminHome> {
                   SizedBox(height: 10),
                   Text(
                     "Admin",
-                    style: TextStyle(color: Colors.white, fontSize: 20),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
                   ),
                 ],
               ),
@@ -138,136 +147,143 @@ class _adminHomeState extends State<adminHome> {
                 GoogleSignIn googleSignIn = GoogleSignIn();
                 googleSignIn.disconnect();
                 await FirebaseAuth.instance.signOut();
-                Navigator.of(context)
-                    .pushNamedAndRemoveUntil("login", (route) => false);
+                Navigator.of(
+                  context,
+                ).pushNamedAndRemoveUntil("login", (route) => false);
               },
             ),
           ],
         ),
       ),
-      body: isLoading
-          ? Center(child: CircularProgressIndicator())
-          : Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: DropdownButtonFormField<String>(
-              value: selectedFilter,
-              items: ['All', 'Approved', 'Rejected', 'Pending']
-                  .map(
-                    (label) => DropdownMenuItem(
-                  value: label,
-                  child: Text(label),
-                ),
-              )
-                  .toList(),
-              onChanged: (value) {
-                if (value != null) {
-                  setState(() {
-                    selectedFilter = value;
-                  });
-                }
-              },
-              decoration: InputDecoration(
-                labelText: "Filter by Status",
-                border: OutlineInputBorder(),
-              ),
-            ),
-          ),
-          Expanded(
-            child: StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection('users')
-                  .where('userType', isEqualTo: 'Company')
-                  .where('requestedCompany', isEqualTo: true)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                }
-
-                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return Center(child: Text('No requests currently'));
-                }
-
-                final requests =
-                snapshot.data!.docs.where(shouldDisplay).toList();
-
-                if (requests.isEmpty) {
-                  return Center(
-                    child: Text('No requests matching selected filter'),
-                  );
-                }
-
-                return ListView.builder(
-                  padding: const EdgeInsets.all(10),
-                  itemCount: requests.length,
-                  itemBuilder: (context, index) {
-                    final user = requests[index];
-                    final name = user['companyName'] ?? 'No Name';
-                    final email = user['email'] ?? 'No Email';
-                    final isApproved = user['isApproved'];
-
-                    String statusText;
-                    if (isApproved == true) {
-                      statusText = 'Status: Approved ✅';
-                    } else if (isApproved == false) {
-                      statusText = 'Status: Rejected ❌';
-                    } else {
-                      statusText = 'Status: Pending';
-                    }
-
-                    return Card(
-                      elevation: 4,
-                      child: ListTile(
-                        title: Text(name),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(email),
-                            Text(
-                              statusText,
-                              style:
-                              TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                        trailing: PopupMenuButton<String>(
-                          onSelected: (value) {
-                            if (value == 'approve') {
-                              showConfirmationDialog(
-                                context: context,
-                                userId: user.id,
-                                isApprove: true,
-                              );
-                            } else if (value == 'reject') {
-                              showConfirmationDialog(
-                                context: context,
-                                userId: user.id,
-                                isApprove: false,
-                              );
-                            }
-                          },
-                          itemBuilder: (context) => [
-                            PopupMenuItem(
-                              value: 'approve',
-                              child: Text('Approve'),
-                            ),
-                            PopupMenuItem(
-                              value: 'reject',
-                              child: Text('Reject'),
-                            ),
-                          ],
-                        ),
+      body:
+          isLoading
+              ? Center(child: CircularProgressIndicator())
+              : Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: DropdownButtonFormField<String>(
+                      value: selectedFilter,
+                      items:
+                          ['All', 'Approved', 'Rejected', 'Pending']
+                              .map(
+                                (label) => DropdownMenuItem(
+                                  value: label,
+                                  child: Text(label),
+                                ),
+                              )
+                              .toList(),
+                      onChanged: (value) {
+                        if (value != null) {
+                          setState(() {
+                            selectedFilter = value;
+                          });
+                        }
+                      },
+                      decoration: InputDecoration(
+                        labelText: "Filter by Status",
+                        border: OutlineInputBorder(),
                       ),
-                    );
-                  },
-                );
-              },
-            ),
-          ),
-        ],
-      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: StreamBuilder<QuerySnapshot>(
+                      stream:
+                          FirebaseFirestore.instance
+                              .collection('users')
+                              .where('userType', isEqualTo: 'Company')
+                              .where('requestedCompany', isEqualTo: true)
+                              .snapshots(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Center(child: CircularProgressIndicator());
+                        }
+
+                        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                          return Center(child: Text('No requests currently'));
+                        }
+
+                        final requests =
+                            snapshot.data!.docs.where(shouldDisplay).toList();
+
+                        if (requests.isEmpty) {
+                          return Center(
+                            child: Text('No requests matching selected filter'),
+                          );
+                        }
+
+                        return ListView.builder(
+                          padding: const EdgeInsets.all(10),
+                          itemCount: requests.length,
+                          itemBuilder: (context, index) {
+                            final user = requests[index];
+                            final name = user['companyName'] ?? 'No Name';
+                            final email = user['email'] ?? 'No Email';
+                            final isApproved = user['isApproved'];
+
+                            String statusText;
+                            if (isApproved == true) {
+                              statusText = 'Status: Approved ✅';
+                            } else if (isApproved == false) {
+                              statusText = 'Status: Rejected ❌';
+                            } else {
+                              statusText = 'Status: Pending';
+                            }
+
+                            return Card(
+                              elevation: 4,
+                              child: ListTile(
+                                title: Text(name),
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(email),
+                                    Text(
+                                      statusText,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                trailing: PopupMenuButton<String>(
+                                  onSelected: (value) {
+                                    if (value == 'approve') {
+                                      showConfirmationDialog(
+                                        context: context,
+                                        userId: user.id,
+                                        isApprove: true,
+                                      );
+                                    } else if (value == 'reject') {
+                                      showConfirmationDialog(
+                                        context: context,
+                                        userId: user.id,
+                                        isApprove: false,
+                                      );
+                                    }
+                                  },
+                                  itemBuilder:
+                                      (context) => [
+                                        PopupMenuItem(
+                                          value: 'approve',
+                                          child: Text('Approve'),
+                                        ),
+                                        PopupMenuItem(
+                                          value: 'reject',
+                                          child: Text('Reject'),
+                                        ),
+                                      ],
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
     );
   }
 }

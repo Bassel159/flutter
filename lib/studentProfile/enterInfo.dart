@@ -16,6 +16,9 @@ class _EnterInfoState extends State<EnterInfo> {
   TextEditingController universityController = TextEditingController();
   TextEditingController majorController = TextEditingController();
   TextEditingController gpaController = TextEditingController();
+  TextEditingController yearController = TextEditingController();
+  TextEditingController gradController = TextEditingController();
+  TextEditingController prefController = TextEditingController();
 
   bool isSaving = false;
 
@@ -31,6 +34,9 @@ class _EnterInfoState extends State<EnterInfo> {
         'university': universityController.text.trim(),
         'major': majorController.text.trim(),
         'gpa': gpaController.text.trim(),
+        'yearofstudy': yearController.text.trim(),
+        'expectedgrad': gpaController.text.trim(),
+        'preferredindustry': prefController.text.trim(),
         'userType': 'Student',
       }, SetOptions(merge: true)); // merge avoids overwriting existing data
 
@@ -86,6 +92,24 @@ class _EnterInfoState extends State<EnterInfo> {
                   icon: Icons.grade,
                   keyboardType: TextInputType.numberWithOptions(decimal: true),
                 ),
+                SizedBox(height: 20),
+                _buildTextField(
+                  controller: yearController,
+                  label: "Year of Study",
+                  icon: Icons.school,
+                ),
+                SizedBox(height: 20),
+                _buildTextField(
+                  controller: gradController,
+                  label: "Expected Graduation",
+                  icon: Icons.school,
+                ),
+                SizedBox(height: 20),
+                _buildTextField(
+                  controller: prefController,
+                  label: "Preferred Industry",
+                  icon: Icons.school,
+                ),
                 SizedBox(height: 40),
                 SizedBox(
                   width: double.infinity,
@@ -98,16 +122,17 @@ class _EnterInfoState extends State<EnterInfo> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    child: isSaving
-                        ? CircularProgressIndicator(color: Colors.white)
-                        : Text(
-                      "SAVE DATA",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: Colors.white,
-                      ),
-                    ),
+                    child:
+                        isSaving
+                            ? CircularProgressIndicator(color: Colors.white)
+                            : Text(
+                              "SAVE DATA",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: Colors.white,
+                              ),
+                            ),
                   ),
                 ),
               ],
@@ -127,14 +152,13 @@ class _EnterInfoState extends State<EnterInfo> {
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
-      validator: (value) =>
-      value == null || value.isEmpty ? 'Please enter $label' : null,
+      validator:
+          (value) =>
+              value == null || value.isEmpty ? 'Please enter $label' : null,
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: Icon(icon, color: Colors.deepPurple),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
       ),
     );

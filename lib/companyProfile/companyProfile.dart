@@ -20,7 +20,7 @@ class _CompanyProfileState extends State<CompanyProfile> {
   Future<void> loadUserData() async {
     try {
       final doc =
-      await FirebaseFirestore.instance.collection('users').doc(uid).get();
+          await FirebaseFirestore.instance.collection('users').doc(uid).get();
       final data = doc.data();
       if (data != null) {
         setState(() {
@@ -34,9 +34,9 @@ class _CompanyProfileState extends State<CompanyProfile> {
       setState(() {
         isLoading = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error loading profile: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error loading profile: $e')));
     }
   }
 
@@ -48,120 +48,129 @@ class _CompanyProfileState extends State<CompanyProfile> {
 
   @override
   Widget build(BuildContext context) {
-    final mainColor = const Color.fromARGB(255, 72, 144, 180);
+    final mainColor = Theme.of(context).colorScheme.primary;
 
     return Scaffold(
       appBar: AppBar(
         title: Text("Company Profile"),
         centerTitle: true,
         elevation: 0,
-        backgroundColor: mainColor,
-        foregroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
       ),
-      body: isLoading
-          ? Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-        padding: EdgeInsets.all(20),
-        child: Column(
-          children: [
-            // Profile Header
-            Container(
-              margin: EdgeInsets.only(bottom: 30),
-              child: Column(
-                children: [
-                  CircleAvatar(
-                    radius: 50,
-                    backgroundColor: mainColor.withOpacity(0.1),
-                    child: Icon(
-                      Icons.business,
-                      size: 50,
-                      color: mainColor,
-                    ),
-                  ),
-                  SizedBox(height: 15),
-                  Text(
-                    companyName,
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: mainColor,
-                    ),
-                  ),
-                  Text(
-                    industry,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // Profile Details Card
-            Card(
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Padding(
+      body:
+          isLoading
+              ? Center(child: CircularProgressIndicator())
+              : SingleChildScrollView(
                 padding: EdgeInsets.all(20),
                 child: Column(
                   children: [
-                    _buildProfileItem(
-                      icon: Icons.business,
-                      title: "Company Name",
-                      value: companyName,
-                      color: mainColor,
+                    // Profile Header
+                    Container(
+                      margin: EdgeInsets.only(bottom: 30),
+                      child: Column(
+                        children: [
+                          CircleAvatar(
+                            radius: 50,
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.primary.withOpacity(0.1),
+                            child: Icon(
+                              Icons.business,
+                              size: 50,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                          SizedBox(height: 15),
+                          Text(
+                            companyName,
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                          Text(
+                            industry,
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    Divider(height: 30),
-                    _buildProfileItem(
-                      icon: Icons.category,
-                      title: "Industry",
-                      value: industry,
-                      color: mainColor,
+
+                    // Profile Details Card
+                    Card(
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.all(20),
+                        child: Column(
+                          children: [
+                            _buildProfileItem(
+                              icon: Icons.business,
+                              title: "Company Name",
+                              value: companyName,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                            Divider(height: 30),
+                            _buildProfileItem(
+                              icon: Icons.category,
+                              title: "Industry",
+                              value: industry,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                            Divider(height: 30),
+                            _buildProfileItem(
+                              icon: Icons.email,
+                              title: "Email",
+                              value: email,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                    Divider(height: 30),
-                    _buildProfileItem(
-                      icon: Icons.email,
-                      title: "Email",
-                      value: email,
-                      color: mainColor,
+
+                    SizedBox(height: 30),
+
+                    // Edit Button
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          final result = await Navigator.of(
+                            context,
+                          ).pushNamed("editcprofile");
+                          if (result == true) {
+                            loadUserData();
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Theme.of(
+                            context,
+                          ).colorScheme.primary.withOpacity(0.1),
+                          padding: EdgeInsets.symmetric(vertical: 15),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: Text(
+                          'Edit Profile',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),
               ),
-            ),
-
-            SizedBox(height: 30),
-
-            // Edit Button
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () async {
-                  final result =
-                  await Navigator.of(context).pushNamed("editcprofile");
-                  if (result == true) {
-                    loadUserData();
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: mainColor,
-                  padding: EdgeInsets.symmetric(vertical: 15),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                child: Text(
-                  'Edit Profile',
-                  style: TextStyle(fontSize: 18, color: Colors.white),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -174,7 +183,8 @@ class _CompanyProfileState extends State<CompanyProfile> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, color: color, size: 28),
+        Icon(icon, color: Theme.of(context).colorScheme.primary, size: 28),
+
         SizedBox(width: 15),
         Expanded(
           child: Column(
@@ -182,7 +192,10 @@ class _CompanyProfileState extends State<CompanyProfile> {
             children: [
               Text(
                 title,
-                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
               ),
               SizedBox(height: 5),
               Text(

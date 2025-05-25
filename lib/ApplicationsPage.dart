@@ -55,6 +55,7 @@ class _ApplicationsPageState extends State<ApplicationsPage> {
           'status': appData['status'] ?? 'Pending',
           'cvUrl': appData['cvUrl'] ?? '',
           'appliedAt': appData['timestamp'],
+          'interviewDate': appData['interviewDate'],
         };
       }
     }
@@ -103,6 +104,14 @@ class _ApplicationsPageState extends State<ApplicationsPage> {
                 itemBuilder: (context, index) {
                   final app = applications[index];
                   final status = app['status'];
+                  final date2 =
+                      app['interviewDate'] != null
+                          ? (app['interviewDate'] as Timestamp)
+                              .toDate()
+                              .toLocal()
+                              .toString()
+                              .split('.')[0]
+                          : 'Unknown Date';
                   final date =
                       app['appliedAt'] != null
                           ? (app['appliedAt'] as Timestamp)
@@ -131,8 +140,14 @@ class _ApplicationsPageState extends State<ApplicationsPage> {
                           ),
                           SizedBox(height: 4),
                           Text("Applied on: $date"),
+                          if (date2 != null)
+                            Text(
+                              "Interview Date: $date2",
+                              style: TextStyle(color: Colors.blueAccent),
+                            ),
                         ],
                       ),
+
                       trailing: Chip(
                         label: Text(status),
                         backgroundColor: statusColor(status),

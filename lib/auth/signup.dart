@@ -21,6 +21,10 @@ class _SignUpState extends State<SignUp> {
   TextEditingController studentName = TextEditingController();
   TextEditingController university = TextEditingController();
   TextEditingController major = TextEditingController();
+  TextEditingController gpa = TextEditingController();
+  TextEditingController yearofstudy = TextEditingController();
+  TextEditingController expectedgrad = TextEditingController();
+  TextEditingController prefindustry = TextEditingController();
 
   TextEditingController companyName = TextEditingController();
   TextEditingController industry = TextEditingController();
@@ -81,12 +85,12 @@ class _SignUpState extends State<SignUp> {
                       isExpanded: true,
                       underline: SizedBox(),
                       items:
-                      ['Student', 'Company'].map((type) {
-                        return DropdownMenuItem(
-                          value: type,
-                          child: Text(type),
-                        );
-                      }).toList(),
+                          ['Student', 'Company'].map((type) {
+                            return DropdownMenuItem(
+                              value: type,
+                              child: Text(type),
+                            );
+                          }).toList(),
                       onChanged: (val) {
                         setState(() {
                           userType = val!;
@@ -118,6 +122,38 @@ class _SignUpState extends State<SignUp> {
                     CustomTextForm(
                       hinttext: "Enter your Major",
                       mycontroller: major,
+                      validator:
+                          (val) => val!.isEmpty ? "Enter something" : null,
+                    ),
+                    SizedBox(height: 20),
+                    _buildLabel("GPA"),
+                    CustomTextForm(
+                      hinttext: "Enter your GPA",
+                      mycontroller: gpa,
+                      validator:
+                          (val) => val!.isEmpty ? "Enter something" : null,
+                    ),
+                    SizedBox(height: 20),
+                    _buildLabel("Year of Study"),
+                    CustomTextForm(
+                      hinttext: "Enter your Year of Study",
+                      mycontroller: yearofstudy,
+                      validator:
+                          (val) => val!.isEmpty ? "Enter something" : null,
+                    ),
+                    SizedBox(height: 20),
+                    _buildLabel("Expected Graduation"),
+                    CustomTextForm(
+                      hinttext: "Enter your expected Graduation Year",
+                      mycontroller: expectedgrad,
+                      validator:
+                          (val) => val!.isEmpty ? "Enter something" : null,
+                    ),
+                    SizedBox(height: 20),
+                    _buildLabel("Preferred Industry"),
+                    CustomTextForm(
+                      hinttext: "Enter your Preferred Industry",
+                      mycontroller: prefindustry,
                       validator:
                           (val) => val!.isEmpty ? "Enter something" : null,
                     ),
@@ -167,34 +203,38 @@ class _SignUpState extends State<SignUp> {
                   try {
                     final credential = await FirebaseAuth.instance
                         .createUserWithEmailAndPassword(
-                      email: email.text,
-                      password: password.text,
-                    );
+                          email: email.text,
+                          password: password.text,
+                        );
 
                     await FirebaseFirestore.instance
                         .collection('users')
                         .doc(credential.user!.uid)
                         .set({
-                      'email': email.text,
-                      'userType': userType,
-                      if (userType == 'Student') ...{
-                        'studentName': studentName.text,
-                        'university': university.text,
-                        'major': major.text,
-                        'companyName': null,
-                        'industry': null,
-                        'requestedCompany': false,
-                        'isApproved': false,
-                      } else ...{
-                        'studentName': null,
-                        'university': null,
-                        'major': null,
-                        'companyName': companyName.text,
-                        'industry': industry.text,
-                        'requestedCompany': true,
-                        'isApproved': false, // وضع القيمة الافتراضية هنا
-                      },
-                    });
+                          'email': email.text,
+                          'userType': userType,
+                          if (userType == 'Student') ...{
+                            'studentName': studentName.text,
+                            'university': university.text,
+                            'major': major.text,
+                            'gpa': gpa.text,
+                            'yearofstudy': yearofstudy.text,
+                            'expectedgrad': expectedgrad.text,
+                            'prefindustry': prefindustry.text,
+                            'companyName': null,
+                            'industry': null,
+                            'requestedCompany': false,
+                            'isApproved': false,
+                          } else ...{
+                            'studentName': null,
+                            'university': null,
+                            'major': null,
+                            'companyName': companyName.text,
+                            'industry': industry.text,
+                            'requestedCompany': true,
+                            'isApproved': false, // وضع القيمة الافتراضية هنا
+                          },
+                        });
 
                     Navigator.of(context).pushReplacementNamed("login");
                   } on FirebaseAuthException catch (e) {

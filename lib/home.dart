@@ -5,7 +5,9 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Home extends StatefulWidget {
-  const Home({super.key});
+  final String userType;
+
+  const Home({Key? key, required this.userType}) : super(key: key);
 
   @override
   State<Home> createState() => _HomeState();
@@ -191,27 +193,36 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
+
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: colorScheme.surface,
       floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color.fromARGB(255, 72, 144, 180),
-        foregroundColor: Colors.white,
+        backgroundColor: colorScheme.primary,
+        foregroundColor: colorScheme.onPrimary,
         onPressed: viewCV,
-        child: Icon(Icons.picture_as_pdf),
         tooltip: 'View CV',
+        child: Icon(Icons.picture_as_pdf),
       ),
       appBar: AppBar(
-        title: const Text("Home"),
+        title: Text("Home", style: textTheme.titleLarge),
+        backgroundColor: colorScheme.primary,
+        foregroundColor: colorScheme.onPrimary,
         actions: [
-          IconButton(onPressed: () {}, icon: Icon(Icons.notifications)),
+          IconButton(
+            onPressed: () {},
+            icon: Icon(Icons.notifications, color: colorScheme.onPrimary),
+          ),
         ],
       ),
       drawer: Drawer(
         child: ListView(
-          padding: EdgeInsets.all(0),
+          padding: EdgeInsets.zero,
           children: [
             DrawerHeader(
-              decoration: BoxDecoration(color: Colors.purple),
+              decoration: BoxDecoration(color: colorScheme.primary),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -219,43 +230,23 @@ class _HomeState extends State<Home> {
                   SizedBox(height: 10),
                   Text(
                     studentName,
-                    style: TextStyle(color: Colors.white, fontSize: 20),
+                    style: textTheme.titleMedium?.copyWith(
+                      color: colorScheme.onPrimary,
+                    ),
                   ),
                   Text(
                     email,
-                    style: TextStyle(color: Colors.white, fontSize: 20),
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onPrimary,
+                    ),
                   ),
                 ],
               ),
             ),
-            ListTile(
-              leading: Icon(Icons.home),
-              title: Text("Home"),
-              onTap: () {
-                Navigator.of(context).pushReplacementNamed("home");
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.settings),
-              title: Text("Settings"),
-              onTap: () {
-                Navigator.of(context).pushNamed("settings");
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.person),
-              title: Text("Profile"),
-              onTap: () {
-                Navigator.of(context).pushNamed("profile");
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.work),
-              title: Text("Applications"),
-              onTap: () {
-                Navigator.of(context).pushNamed("applications");
-              },
-            ),
+            _drawerItem(Icons.home, "Home", "home"),
+            _drawerItem(Icons.settings, "Settings", "settings"),
+            _drawerItem(Icons.person, "Profile", "profile"),
+            _drawerItem(Icons.work, "Applications", "applications"),
             ListTile(
               leading: Icon(Icons.exit_to_app),
               title: Text("Logout"),
@@ -297,7 +288,7 @@ class _HomeState extends State<Home> {
                           ? appliedApplications[companyId]!['status']
                           : null;
 
-                  String statusText = '';
+                  String statusText = 'Not Applied';
                   Color statusColor = Colors.grey;
 
                   switch (applicationStatus) {
@@ -317,8 +308,6 @@ class _HomeState extends State<Home> {
                       statusText = 'Cancelled';
                       statusColor = Colors.grey;
                       break;
-                    default:
-                      statusText = 'Not Applied';
                   }
 
                   return Card(
@@ -334,21 +323,22 @@ class _HomeState extends State<Home> {
                               children: [
                                 Text(
                                   company['cName'] ?? 'Unknown Company',
-                                  style: TextStyle(
-                                    fontSize: 18,
+                                  style: textTheme.titleMedium?.copyWith(
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
                                 SizedBox(height: 6),
                                 Text(
                                   company['industry'] ?? '',
-                                  style: TextStyle(color: Colors.grey[600]),
+                                  style: textTheme.bodyMedium?.copyWith(
+                                    color: Colors.grey[600],
+                                  ),
                                 ),
                                 SizedBox(height: 8),
                                 if (isApplied)
                                   Text(
                                     'Status: $statusText',
-                                    style: TextStyle(
+                                    style: textTheme.bodyMedium?.copyWith(
                                       color: statusColor,
                                       fontWeight: FontWeight.w600,
                                     ),
@@ -362,6 +352,10 @@ class _HomeState extends State<Home> {
                               if (!isApplied)
                                 ElevatedButton(
                                   onPressed: () => applyToCompany(companyId),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: colorScheme.primary,
+                                    foregroundColor: colorScheme.onPrimary,
+                                  ),
                                   child: Text("Apply"),
                                 )
                               else if (applicationStatus != 'cancelled') ...[
@@ -380,11 +374,9 @@ class _HomeState extends State<Home> {
                                         () => cancelApplication(companyId),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.red,
+                                      foregroundColor: Colors.white,
                                     ),
-                                    child: Text(
-                                      "Cancel Application",
-                                      style: TextStyle(color: Colors.white),
-                                    ),
+                                    child: Text("Cancel Application"),
                                   ),
                                 ],
                               ] else
@@ -404,6 +396,16 @@ class _HomeState extends State<Home> {
                   );
                 },
               ),
+    );
+  }
+
+  Widget _drawerItem(IconData icon, String title, String routeName) {
+    return ListTile(
+      leading: Icon(icon),
+      title: Text(title),
+      onTap: () {
+        Navigator.of(context).pushReplacementNamed(routeName);
+      },
     );
   }
 }
