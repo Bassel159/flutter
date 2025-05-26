@@ -13,12 +13,98 @@ class _EnterInfoState extends State<EnterInfo> {
   final uid = FirebaseAuth.instance.currentUser?.uid;
   final _formKey = GlobalKey<FormState>();
 
-  TextEditingController universityController = TextEditingController();
-  TextEditingController majorController = TextEditingController();
-  TextEditingController gpaController = TextEditingController();
-  TextEditingController yearController = TextEditingController();
-  TextEditingController gradController = TextEditingController();
-  TextEditingController prefController = TextEditingController();
+  String? selectedUniversity;
+  String? selectedMajor;
+  String? selectedGPA;
+  String? selectedYear;
+  String? selectedGrad;
+  String? selectedPref;
+
+  final List<String> universities = [
+    "Ajloun National University",
+    "Al al-Bayt University",
+    "Al-Ahliyya Amman University",
+    "Al-Balqa Applied University",
+    "Al-Hussein Bin Talal University",
+    "Al Hussein Technical University",
+    "Al-Isra University",
+    "Al-Zaytoonah University of Jordan",
+    "American University of Madaba",
+    "Amman Arab University",
+    "Aqaba Medical Sciences University",
+    "Aqaba University of Technology",
+    "Applied Science Private University",
+    "Arab Academy for Banking and Financial Sciences",
+    "Arab Open University",
+    "Columbia University: Amman Branch",
+    "German-Jordanian University",
+    "Hashemite University",
+    "Ibn Sina University for Medical Sciences",
+    "Irbid National University",
+    "Jadara University",
+    "Jerash Private University",
+    "Jordan Academy for Maritime Studies",
+    "Jordan Academy of Music",
+    "Jordan Institute of Banking Studies",
+    "Jordan Media Institute",
+    "Jordan University of Science and Technology",
+    "Luminus Technical University College",
+    "Middle East University",
+    "Mutah University",
+    "National University College of Technology",
+    "New York Institute of Technology, Madaba",
+    "Petra University",
+    "Philadelphia University",
+    "Princess Sumaya University for Technology",
+    "Queen Noor Civil Aviation Technical College",
+    "Tafila Technical University",
+    "The World Islamic Science & Education University (W.I.S.E)",
+    "University of Jordan",
+    "Yarmouk University",
+    "Zarqa University",
+  ];
+  final List<String> Majors = [
+    "Computer Science",
+    "Software Engineering",
+    "Cybersecurity",
+    "Data Science",
+    "Artificial Intelligence",
+    "Computer Engineering",
+    "Computer Information Systems",
+    "Game Development",
+  ];
+  final List<String> GPA = [
+    "Distinguished",
+    "Excellent",
+    "Very Good",
+    "Good",
+    "Fair",
+  ];
+  final List<String> year = [
+    "1st Year",
+    "2nd Year",
+    "3rd Year",
+    "4th Year",
+    "5th Year"
+  ];
+  final List<String> gradyear = [
+    "2025","2026","2027","2028","2029","2030","2031",
+  ];
+  final List<String> prefind = [
+    "Mobile Development",
+    "Web Development",
+    "Software Development",
+    "Frontend Development",
+    "Backend Development",
+    "Full Stack Development",
+    "DevOps Engineering",
+    "Database Administration",
+    "Network Engineering",
+    "Cloud Engineering",
+    "Data Science",
+    "QA Engineering",
+    "Cybersecurity",
+  ];
 
   bool isSaving = false;
 
@@ -31,12 +117,12 @@ class _EnterInfoState extends State<EnterInfo> {
 
     try {
       await FirebaseFirestore.instance.collection('users').doc(uid).set({
-        'university': universityController.text.trim(),
-        'major': majorController.text.trim(),
-        'gpa': gpaController.text.trim(),
-        'yearofstudy': yearController.text.trim(),
-        'expectedgrad': gpaController.text.trim(),
-        'preferredindustry': prefController.text.trim(),
+        'university': selectedUniversity,
+        'major': selectedMajor,
+        'gpa': selectedGPA,
+        'yearofstudy': selectedYear,
+        'expectedgrad': selectedGrad,
+        'preferredindustry': selectedPref,
         'userType': 'Student',
       }, SetOptions(merge: true)); // merge avoids overwriting existing data
 
@@ -63,7 +149,7 @@ class _EnterInfoState extends State<EnterInfo> {
       onWillPop: () async => false, // Prevent back navigation
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Enter Info"),
+          title: Text("Enter Information"),
           backgroundColor: Colors.deepPurple,
           centerTitle: true,
           automaticallyImplyLeading: false, // Hide back arrow
@@ -74,41 +160,124 @@ class _EnterInfoState extends State<EnterInfo> {
             key: _formKey,
             child: Column(
               children: [
-                _buildTextField(
-                  controller: universityController,
-                  label: "University",
-                  icon: Icons.account_balance,
+                DropdownButtonFormField<String>(
+                  isExpanded: true,
+                  decoration: InputDecoration(
+                    labelText: "Choose your University",
+                    border: OutlineInputBorder(),
+                  ),
+                  value: selectedUniversity,
+                  items: universities.map((item) {
+                    return DropdownMenuItem<String>(
+                      value: item,
+                      child: Text(item),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedUniversity = value;
+                    });
+                  },
                 ),
                 SizedBox(height: 20),
-                _buildTextField(
-                  controller: majorController,
-                  label: "Major / Field of Study",
-                  icon: Icons.school,
+                DropdownButtonFormField<String>(
+                  isExpanded: true,
+                  decoration: InputDecoration(
+                    labelText: "Choose your Major",
+                    border: OutlineInputBorder(),
+                  ),
+                  value: selectedMajor,
+                  items: Majors.map((item) {
+                    return DropdownMenuItem<String>(
+                      value: item,
+                      child: Text(item),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedMajor = value;
+                    });
+                  },
                 ),
                 SizedBox(height: 20),
-                _buildTextField(
-                  controller: gpaController,
-                  label: "GPA",
-                  icon: Icons.grade,
-                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                DropdownButtonFormField<String>(
+                  isExpanded: true,
+                  decoration: InputDecoration(
+                    labelText: "Choose your GPA",
+                    border: OutlineInputBorder(),
+                  ),
+                  value: selectedGPA,
+                  items: GPA.map((item) {
+                    return DropdownMenuItem<String>(
+                      value: item,
+                      child: Text(item),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedGPA = value;
+                    });
+                  },
                 ),
                 SizedBox(height: 20),
-                _buildTextField(
-                  controller: yearController,
-                  label: "Year of Study",
-                  icon: Icons.school,
+                DropdownButtonFormField<String>(
+                  isExpanded: true,
+                  decoration: InputDecoration(
+                    labelText: "Choose your Year of Study",
+                    border: OutlineInputBorder(),
+                  ),
+                  value: selectedYear,
+                  items: year.map((item) {
+                    return DropdownMenuItem<String>(
+                      value: item,
+                      child: Text(item),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedYear = value;
+                    });
+                  },
                 ),
                 SizedBox(height: 20),
-                _buildTextField(
-                  controller: gradController,
-                  label: "Expected Graduation",
-                  icon: Icons.school,
+                DropdownButtonFormField<String>(
+                  isExpanded: true,
+                  decoration: InputDecoration(
+                    labelText: "Choose your Expected Graduation",
+                    border: OutlineInputBorder(),
+                  ),
+                  value: selectedGrad,
+                  items: gradyear.map((item) {
+                    return DropdownMenuItem<String>(
+                      value: item,
+                      child: Text(item),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedGrad = value;
+                    });
+                  },
                 ),
                 SizedBox(height: 20),
-                _buildTextField(
-                  controller: prefController,
-                  label: "Preferred Industry",
-                  icon: Icons.school,
+                DropdownButtonFormField<String>(
+                  isExpanded: true,
+                  decoration: InputDecoration(
+                    labelText: "Choose your Preferred Industry",
+                    border: OutlineInputBorder(),
+                  ),
+                  value: selectedPref,
+                  items: prefind.map((item) {
+                    return DropdownMenuItem<String>(
+                      value: item,
+                      child: Text(item),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedPref = value;
+                    });
+                  },
                 ),
                 SizedBox(height: 40),
                 SizedBox(

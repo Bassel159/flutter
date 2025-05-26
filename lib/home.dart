@@ -404,7 +404,7 @@ class _HomeState extends State<Home> {
       leading: Icon(icon),
       title: Text(title),
       onTap: () {
-        Navigator.of(context).pushReplacementNamed(routeName);
+        Navigator.of(context).pushNamed(routeName);
       },
     );
   }

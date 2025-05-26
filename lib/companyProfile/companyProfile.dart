@@ -14,6 +14,7 @@ class _CompanyProfileState extends State<CompanyProfile> {
 
   String companyName = "";
   String industry = "";
+  String location = "";
   String email = "";
   bool isLoading = true;
 
@@ -26,6 +27,7 @@ class _CompanyProfileState extends State<CompanyProfile> {
         setState(() {
           companyName = data['companyName'] ?? '';
           industry = data['industry'] ?? '';
+          location = data['location'] ?? '';
           email = data['email'] ?? '';
           isLoading = false;
         });
@@ -122,6 +124,13 @@ class _CompanyProfileState extends State<CompanyProfile> {
                               icon: Icons.category,
                               title: "Industry",
                               value: industry,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                            Divider(height: 30),
+                            _buildProfileItem(
+                              icon: Icons.location_on,
+                              title: "Location",
+                              value: location,
                               color: Theme.of(context).colorScheme.primary,
                             ),
                             Divider(height: 30),

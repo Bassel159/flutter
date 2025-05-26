@@ -14,10 +14,41 @@ class _EditCProfileState extends State<EditCProfile> {
   final _formKey = GlobalKey<FormState>();
 
   TextEditingController nameController = TextEditingController();
-  TextEditingController industryController = TextEditingController();
+  String? selectedLocation;
+  String? selectedIndustry;
 
   bool isLoading = true;
   bool isSaving = false;
+
+  final List<String> prefind = [
+    "Mobile Development",
+    "Web Development",
+    "Software Development",
+    "Frontend Development",
+    "Backend Development",
+    "Full Stack Development",
+    "DevOps Engineering",
+    "Database Administration",
+    "Network Engineering",
+    "Cloud Engineering",
+    "Data Science",
+    "QA Engineering",
+    "Cybersecurity",
+  ];
+  final List<String> location = [
+    "Ajloun",
+    "Amman",
+    "Aqaba",
+    "Balqa",
+    "Irbid",
+    "Jerash",
+    "Karak",
+    "Ma'an",
+    "Madaba",
+    "Mafraq",
+    "Tafilah",
+    "Zarqa",
+  ];
 
   Future<void> loadUserData() async {
     try {
@@ -27,7 +58,8 @@ class _EditCProfileState extends State<EditCProfile> {
       if (data != null) {
         setState(() {
           nameController.text = data['companyName'] ?? '';
-          industryController.text = data['industry'] ?? '';
+          selectedIndustry = data['industry'] ?? '';
+          selectedLocation = data['location'] ?? '';
           isLoading = false;
         });
       }
@@ -51,7 +83,8 @@ class _EditCProfileState extends State<EditCProfile> {
     try {
       await FirebaseFirestore.instance.collection('users').doc(uid).update({
         'companyName': nameController.text.trim(),
-        'industry': industryController.text.trim(),
+        'industry': selectedIndustry,
+        'location': selectedLocation,
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -87,7 +120,6 @@ class _EditCProfileState extends State<EditCProfile> {
   @override
   void dispose() {
     nameController.dispose();
-    industryController.dispose();
     super.dispose();
   }
 
@@ -137,20 +169,46 @@ class _EditCProfileState extends State<EditCProfile> {
               SizedBox(height: 20),
 
               // Industry Field
-              _buildTextField(
-                controller: industryController,
-                label: "Industry",
-                icon: Icons.category,
-                color: mainColor,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter the industry';
-                  }
-                  return null;
+              DropdownButtonFormField<String>(
+                isExpanded: true,
+                decoration: InputDecoration(
+                  labelText: "Choose your Industry",
+                  border: OutlineInputBorder(),
+                ),
+                value: selectedIndustry,
+                items: prefind.map((item) {
+                  return DropdownMenuItem<String>(
+                    value: item,
+                    child: Text(item),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    selectedIndustry = value;
+                  });
                 },
               ),
               SizedBox(height: 40),
-
+              DropdownButtonFormField<String>(
+                isExpanded: true,
+                decoration: InputDecoration(
+                  labelText: "Choose your Location",
+                  border: OutlineInputBorder(),
+                ),
+                value: selectedLocation,
+                items: location.map((item) {
+                  return DropdownMenuItem<String>(
+                    value: item,
+                    child: Text(item),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    selectedLocation = value;
+                  });
+                },
+              ),
+              SizedBox(height: 40),
               // Save Button
               SizedBox(
                 width: double.infinity,
