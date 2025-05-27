@@ -1,24 +1,20 @@
 import 'package:flutter/material.dart';
 
-class CompanySettings extends StatefulWidget {
+class AdminSettings extends StatefulWidget {
   final Function(bool) onToggleTheme;
   late bool isDark;
 
-  CompanySettings({
-    super.key,
-    required this.onToggleTheme,
-    required this.isDark,
-  });
+  AdminSettings({super.key, required this.onToggleTheme, required this.isDark});
 
   @override
-  State<CompanySettings> createState() => _CompanySettingsState();
+  State<AdminSettings> createState() => _AdminSettingsState();
 }
 
-class _CompanySettingsState extends State<CompanySettings> {
+class _AdminSettingsState extends State<AdminSettings> {
   bool _isDark = false;
   bool _notificationEnabled = true;
 
-  final Color mainColor = Colors.blue;
+  final Color mainColor = Colors.red; // لون مختلف للأدمن
 
   @override
   void initState() {
@@ -30,7 +26,7 @@ class _CompanySettingsState extends State<CompanySettings> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Company Settings", style: TextStyle(color: Colors.white)),
+        title: Text("Admin Settings", style: TextStyle(color: Colors.white)),
         backgroundColor: mainColor,
         iconTheme: IconThemeData(color: Colors.white),
       ),
@@ -59,6 +55,15 @@ class _CompanySettingsState extends State<CompanySettings> {
               },
             ),
             Divider(),
+            // يمكنك إضافة إعدادات إضافية خاصة بالأدمن هنا
+            _buildSettingRow(
+              label: "Receive Reports",
+              value: true,
+              onChanged: (val) {
+                // هذا فقط مثال – يمكن تطويره لاحقًا
+              },
+            ),
+            Divider(),
           ],
         ),
       ),
@@ -82,8 +87,8 @@ class _CompanySettingsState extends State<CompanySettings> {
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: Colors.blue,
-            activeTrackColor: Colors.blue.withOpacity(0.4),
+            activeColor: mainColor,
+            activeTrackColor: mainColor.withOpacity(0.4),
             inactiveThumbColor: Colors.grey,
             inactiveTrackColor: Colors.grey[300],
           ),

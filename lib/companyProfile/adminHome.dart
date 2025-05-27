@@ -94,7 +94,7 @@ class _adminHomeState extends State<adminHome> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: Colors.red,
         title: const Text("Admin Dashboard"),
         actions: [
           IconButton(
@@ -109,9 +109,7 @@ class _adminHomeState extends State<adminHome> {
           padding: EdgeInsets.all(0),
           children: [
             DrawerHeader(
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary,
-              ),
+              decoration: BoxDecoration(color: Colors.red),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -121,6 +119,7 @@ class _adminHomeState extends State<adminHome> {
                     "Admin",
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.onPrimary,
+                      fontSize: 20,
                     ),
                   ),
                 ],
@@ -130,14 +129,14 @@ class _adminHomeState extends State<adminHome> {
               leading: Icon(Icons.home),
               title: Text("Home"),
               onTap: () {
-                Navigator.of(context).pushReplacementNamed("home");
+                Navigator.of(context).pushReplacementNamed("adminhome");
               },
             ),
             ListTile(
               leading: Icon(Icons.settings),
               title: Text("Settings"),
               onTap: () {
-                Navigator.of(context).pushNamed("settings");
+                Navigator.of(context).pushNamed("adminsettings");
               },
             ),
             ListTile(

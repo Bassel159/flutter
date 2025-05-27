@@ -4,7 +4,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:internseek/ApplicationsPage.dart';
 import 'package:internseek/auth/signup.dart';
 import 'package:internseek/categories/add.dart';
-import 'package:internseek/companyProfile/adminHome.dart';
+import 'package:internseek/companyProfile/adminSetting.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'companyProfile/adminHome.dart';
 import 'package:internseek/companyProfile/companyHome.dart';
 import 'package:internseek/companyProfile/companyProfile.dart';
 import 'package:internseek/home.dart';
@@ -25,7 +27,12 @@ import 'components/theme.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const MyApp());
+
+  // استرجاع خيار الثيم من SharedPreferences
+  final prefs = await SharedPreferences.getInstance();
+  final isDark = prefs.getBool('isDarkTheme') ?? false;
+
+  runApp(MyApp(isDark: isDark));
 }
 
 ThemeData getThemeForUserType(String userType, bool isDarkMode) {
@@ -42,23 +49,22 @@ ThemeData getThemeForUserType(String userType, bool isDarkMode) {
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+  final bool isDark;
+
+  const MyApp({super.key, required this.isDark});
 
   @override
   State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  ThemeMode _themeMode = ThemeMode.light;
-
-  void _toggleTheme(bool isDark) {
-    setState(() {
-      _themeMode = isDark ? ThemeMode.dark : ThemeMode.light;
-    });
-  }
+  late ThemeMode _themeMode;
 
   @override
   void initState() {
+    super.initState();
+    _themeMode = widget.isDark ? ThemeMode.dark : ThemeMode.light;
+
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
       if (user == null) {
         print('==================User is currently signed out!');
@@ -66,7 +72,15 @@ class _MyAppState extends State<MyApp> {
         print('=================User is signed in!');
       }
     });
-    super.initState();
+  }
+
+  void _toggleTheme(bool isDark) async {
+    setState(() {
+      _themeMode = isDark ? ThemeMode.dark : ThemeMode.light;
+    });
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isDarkTheme', isDark);
   }
 
   @override
@@ -166,6 +180,11 @@ class _MyAppState extends State<MyApp> {
         "adminhome": (context) => adminHome(),
         "enterinfo": (context) => EnterInfo(),
         'applications': (context) => ApplicationsPage(),
+        "adminsettings":
+            (context) => AdminSettings(
+              isDark: _themeMode == ThemeMode.dark,
+              onToggleTheme: _toggleTheme,
+            ),
       },
     );
   }
