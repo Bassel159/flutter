@@ -140,11 +140,10 @@ class _ApplicationsPageState extends State<ApplicationsPage> {
                           ),
                           SizedBox(height: 4),
                           Text("Applied on: $date"),
-                          if (date2 != null)
-                            Text(
-                              "Interview Date: $date2",
-                              style: TextStyle(color: Colors.blueAccent),
-                            ),
+                          Text(
+                            "Interview Date: $date2",
+                            style: TextStyle(color: Colors.blueAccent),
+                          ),
                         ],
                       ),
 
