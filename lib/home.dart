@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:internseek/companyProfile/companyHome.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Home extends StatefulWidget {
@@ -13,12 +14,46 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
+String? selectedIndustry;
+String? selectedLocation;
+
+final List<String> prefind = [
+  "Mobile Development",
+  "Web Development",
+  "Software Development",
+  "Frontend Development",
+  "Backend Development",
+  "Full Stack Development",
+  "DevOps Engineering",
+  "Database Administration",
+  "Network Engineering",
+  "Cloud Engineering",
+  "Data Science",
+  "QA Engineering",
+  "Cybersecurity",
+];
+final List<String> location = [
+  "Ajloun",
+  "Amman",
+  "Aqaba",
+  "Balqa",
+  "Irbid",
+  "Jerash",
+  "Karak",
+  "Ma'an",
+  "Madaba",
+  "Mafraq",
+  "Tafilah",
+  "Zarqa",
+];
+
 class _HomeState extends State<Home> {
   bool isLoading = true;
   String studentName = "";
   String email = "";
   String studentId = "";
   String cvUrl = "";
+
 
   List<Map<String, dynamic>> companies = [];
   Map<String, Map<String, dynamic>> appliedApplications = {};
@@ -59,30 +94,47 @@ class _HomeState extends State<Home> {
 
   Future<void> fetchCompanies() async {
     try {
-      final snapshot =
-          await FirebaseFirestore.instance
-              .collection('users')
-              .where('userType', isEqualTo: 'Company')
-              .where('isApproved', isEqualTo: true)
-              .where('requestedCompany', isEqualTo: true)
-              .get();
+      final snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .where('userType', isEqualTo: 'Company')
+          .where('isApproved', isEqualTo: true)
+          .where('requestedCompany', isEqualTo: true)
+          .get();
 
-      companies =
-          snapshot.docs.map((doc) {
-            final data = doc.data();
-            return {
-              'id': doc.id,
-              'cName': data['companyName'] ?? 'Unnamed Company',
-              'email': data['email'] ?? '',
-              'industry': data['industry'] ?? '',
-              'isApproved': data['isApproved'] ?? false,
-              'requestedCompany': data['requestedCompany'] ?? false,
-            };
-          }).toList();
+      List<Map<String, dynamic>> tempList = snapshot.docs.map((doc) {
+        final data = doc.data();
+        return {
+          'id': doc.id,
+          'cName': data['companyName'] ?? 'Unnamed Company',
+          'email': data['email'] ?? '',
+          'industry': data['industry'] ?? '',
+          'location': data['location'] ?? '',
+          'isApproved': data['isApproved'] ?? false,
+          'requestedCompany': data['requestedCompany'] ?? false,
+        };
+      }).toList();
+
+      // Apply filters (if not null or empty)
+      companies = tempList.where((company) {
+        bool matches = true;
+
+        if (selectedIndustry != null && selectedIndustry!.isNotEmpty) {
+          matches &= company['industry'] == selectedIndustry;
+        }
+
+        if (selectedLocation != null && selectedLocation!.isNotEmpty) {
+          matches &= company['location'] == selectedLocation;
+        }
+
+        return matches;
+      }).toList();
+
+      setState(() {});
     } catch (e) {
       print('Error fetching companies: $e');
     }
   }
+
 
   Future<void> fetchAppliedCompanies() async {
     try {
@@ -200,11 +252,91 @@ class _HomeState extends State<Home> {
     return Scaffold(
       backgroundColor: colorScheme.surface,
       floatingActionButton: FloatingActionButton(
-        backgroundColor: colorScheme.primary,
-        foregroundColor: colorScheme.onPrimary,
-        onPressed: viewCV,
-        tooltip: 'View CV',
-        child: Icon(Icons.picture_as_pdf),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+
+        onPressed: () {
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            ),
+            builder: (context) {
+              return StatefulBuilder(
+                builder: (context, setModalState) {
+
+                  return Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Wrap(
+                      children: [
+                        Center(
+                          child: Container(
+                            width: 50,
+                            height: 5,
+                            margin: const EdgeInsets.only(bottom: 20),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[400],
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
+                        Text("Filter Companies", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                        SizedBox(height: 20),
+
+                        DropdownButtonFormField<String>(
+                          value: selectedIndustry,
+                          isExpanded: true,
+                          decoration: InputDecoration(labelText: 'Industry'),
+                          items: prefind.map((value) => DropdownMenuItem(value: value, child: Text(value))).toList(),
+                          onChanged: (value) => setModalState(() => selectedIndustry = value),
+                        ),
+                        SizedBox(height: 10),
+
+                        DropdownButtonFormField<String>(
+                          value: selectedLocation,
+                          decoration: InputDecoration(labelText: 'Location'),
+                          items: location.map((value) => DropdownMenuItem(value: value, child: Text(value))).toList(),
+                          onChanged: (value) => setModalState(() => selectedLocation = value),
+                        ),
+                        SizedBox(height: 20),
+
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Theme.of(context).colorScheme.primary,
+                              foregroundColor: Theme.of(context).colorScheme.onPrimary),
+                          onPressed: () {
+                            print("Industry: $selectedIndustry");
+                            print("Location: $selectedLocation");
+                            Navigator.of(context).pushReplacementNamed('home');
+
+                          },
+                          child: Text("Apply Filters"),
+                        ),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Theme.of(context).colorScheme.primary,
+                              foregroundColor: Theme.of(context).colorScheme.onPrimary),
+                          onPressed: () {
+                            setState(() {
+                              selectedIndustry = null;
+                              selectedLocation = null;
+                            });
+                            Navigator.of(context).pushReplacementNamed('home');
+
+                          },
+                          child: Text("Clear"),
+                        ),
+
+                      ],
+                    ),
+                  );
+                },
+              );
+            },
+          );
+        },
+        child: Icon(Icons.filter_list),
       ),
       appBar: AppBar(
         title: Text("Home", style: textTheme.titleLarge),
@@ -330,6 +462,13 @@ class _HomeState extends State<Home> {
                                 SizedBox(height: 6),
                                 Text(
                                   company['industry'] ?? '',
+                                  style: textTheme.bodyMedium?.copyWith(
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                                SizedBox(height: 6),
+                                Text(
+                                  company['location'] ?? '',
                                   style: textTheme.bodyMedium?.copyWith(
                                     color: Colors.grey[600],
                                   ),

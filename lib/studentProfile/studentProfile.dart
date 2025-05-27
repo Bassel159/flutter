@@ -127,13 +127,13 @@ class _studentProfileState extends State<studentProfile> {
                         child: Column(
                           children: [
                             _buildProfileItem(
-                              icon: Icons.school,
+                              icon: Icons.account_balance,
                               title: "University",
                               value: university,
                             ),
                             Divider(height: 30),
                             _buildProfileItem(
-                              icon: Icons.work,
+                              icon: Icons.school,
                               title: "Major",
                               value: major,
                             ),
@@ -151,13 +151,13 @@ class _studentProfileState extends State<studentProfile> {
                             ),
                             Divider(height: 30),
                             _buildProfileItem(
-                              icon: Icons.library_books,
+                              icon: Icons.calendar_today,
                               title: "Year of Study",
                               value: yearofstudy,
                             ),
                             Divider(height: 30),
                             _buildProfileItem(
-                              icon: Icons.calendar_today,
+                              icon: Icons.event,
                               title: "Expected Graduation",
                               value: expectedgrad,
                             ),

@@ -21,7 +21,7 @@ class _CompanyProfileState extends State<CompanyProfile> {
   Future<void> loadUserData() async {
     try {
       final doc =
-          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      await FirebaseFirestore.instance.collection('users').doc(uid).get();
       final data = doc.data();
       if (data != null) {
         setState(() {
@@ -61,125 +61,125 @@ class _CompanyProfileState extends State<CompanyProfile> {
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
       ),
       body:
-          isLoading
-              ? Center(child: CircularProgressIndicator())
-              : SingleChildScrollView(
+      isLoading
+          ? Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+        padding: EdgeInsets.all(20),
+        child: Column(
+          children: [
+            // Profile Header
+            Container(
+              margin: EdgeInsets.only(bottom: 30),
+              child: Column(
+                children: [
+                  CircleAvatar(
+                    radius: 50,
+                    backgroundColor: Theme.of(
+                      context,
+                    ).colorScheme.primary.withOpacity(0.1),
+                    child: Icon(
+                      Icons.business,
+                      size: 50,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                  SizedBox(height: 15),
+                  Text(
+                    companyName,
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                  Text(
+                    industry,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Profile Details Card
+            Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Padding(
                 padding: EdgeInsets.all(20),
                 child: Column(
                   children: [
-                    // Profile Header
-                    Container(
-                      margin: EdgeInsets.only(bottom: 30),
-                      child: Column(
-                        children: [
-                          CircleAvatar(
-                            radius: 50,
-                            backgroundColor: Theme.of(
-                              context,
-                            ).colorScheme.primary.withOpacity(0.1),
-                            child: Icon(
-                              Icons.business,
-                              size: 50,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                          ),
-                          SizedBox(height: 15),
-                          Text(
-                            companyName,
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                          ),
-                          Text(
-                            industry,
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                          ),
-                        ],
-                      ),
+                    _buildProfileItem(
+                      icon: Icons.business,
+                      title: "Company Name",
+                      value: companyName,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
-
-                    // Profile Details Card
-                    Card(
-                      elevation: 4,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.all(20),
-                        child: Column(
-                          children: [
-                            _buildProfileItem(
-                              icon: Icons.business,
-                              title: "Company Name",
-                              value: companyName,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                            Divider(height: 30),
-                            _buildProfileItem(
-                              icon: Icons.category,
-                              title: "Industry",
-                              value: industry,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                            Divider(height: 30),
-                            _buildProfileItem(
-                              icon: Icons.location_on,
-                              title: "Location",
-                              value: location,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                            Divider(height: 30),
-                            _buildProfileItem(
-                              icon: Icons.email,
-                              title: "Email",
-                              value: email,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                          ],
-                        ),
-                      ),
+                    Divider(height: 30),
+                    _buildProfileItem(
+                      icon: Icons.category,
+                      title: "Industry",
+                      value: industry,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
-
-                    SizedBox(height: 30),
-
-                    // Edit Button
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          final result = await Navigator.of(
-                            context,
-                          ).pushNamed("editcprofile");
-                          if (result == true) {
-                            loadUserData();
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Theme.of(
-                            context,
-                          ).colorScheme.primary.withOpacity(0.1),
-                          padding: EdgeInsets.symmetric(vertical: 15),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        child: Text(
-                          'Edit Profile',
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                        ),
-                      ),
+                    Divider(height: 30),
+                    _buildProfileItem(
+                      icon: Icons.location_on,
+                      title: "Location",
+                      value: location,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    Divider(height: 30),
+                    _buildProfileItem(
+                      icon: Icons.email,
+                      title: "Email",
+                      value: email,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                   ],
                 ),
               ),
+            ),
+
+            SizedBox(height: 30),
+
+            // Edit Button
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () async {
+                  final result = await Navigator.of(
+                    context,
+                  ).pushNamed("editcprofile");
+                  if (result == true) {
+                    loadUserData();
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(
+                    context,
+                  ).colorScheme.primary.withOpacity(0.1),
+                  padding: EdgeInsets.symmetric(vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: Text(
+                  'Edit Profile',
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
