@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:internseek/companyProfile/companyHome.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Home extends StatefulWidget {
@@ -209,9 +208,17 @@ class _HomeState extends State<Home> {
       await FirebaseFirestore.instance
           .collection('applications')
           .doc(applicationId)
-          .update({'status': 'cancelled'});
+          .delete();
 
+      // حذف التطبيق محليًا سريعًا لتحديث الواجهة مباشرة
+      appliedApplications.remove(companyId);
+
+      setState(() {});
+
+      // ثم إعادة جلب البيانات لتأكيد التزامن مع قاعدة البيانات
       await fetchAppliedCompanies();
+
+      // إذا أردت، يمكنك استدعاء setState مرة أخرى بعد جلب البيانات، ولكن غالبًا ليس ضروريًا
       setState(() {});
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -453,11 +460,11 @@ class _HomeState extends State<Home> {
                   Color statusColor = Colors.grey;
 
                   switch (applicationStatus) {
-                    case 'accepted':
+                    case 'Accepted':
                       statusText = 'Accepted';
                       statusColor = Colors.green;
                       break;
-                    case 'rejected':
+                    case 'Rejected':
                       statusText = 'Rejected';
                       statusColor = Colors.red;
                       break;
@@ -514,6 +521,7 @@ class _HomeState extends State<Home> {
                               ],
                             ),
                           ),
+
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
@@ -531,11 +539,14 @@ class _HomeState extends State<Home> {
                                   onPressed: null,
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: statusColor,
+                                    disabledBackgroundColor: statusColor,
                                     disabledForegroundColor: Colors.white,
                                   ),
                                   child: Text(statusText),
                                 ),
-                                if (applicationStatus == 'pending') ...[
+                                if (applicationStatus == 'pending' ||
+                                    applicationStatus == 'Accepted' ||
+                                    applicationStatus == 'Rejected') ...[
                                   SizedBox(height: 8),
                                   ElevatedButton(
                                     onPressed:

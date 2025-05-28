@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 
 class Setting extends StatefulWidget {
   final Function(bool) onToggleTheme;
-  late bool isDark;
+  final bool isDark;
 
-  Setting({super.key, required this.onToggleTheme, required this.isDark});
+  const Setting({super.key, required this.onToggleTheme, required this.isDark});
 
   @override
   State<Setting> createState() => _SettingState();
 }
 
 class _SettingState extends State<Setting> {
-  bool _isDark = false;
+  late bool _isDark;
   bool _notificationEnabled = true;
 
   final Color mainColor = Colors.deepPurple;
@@ -26,65 +26,72 @@ class _SettingState extends State<Setting> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Settings", style: TextStyle(color: Colors.white)),
+        title: const Text("Settings", style: TextStyle(color: Colors.white)),
         backgroundColor: mainColor,
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.white),
+        elevation: 2,
       ),
-      body: Padding(
+      body: ListView(
         padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            _buildSettingRow(
-              label: "Dark Theme",
-              value: _isDark,
-              onChanged: (val) {
-                setState(() {
-                  _isDark = val;
-                });
-                widget.onToggleTheme(val);
-              },
-            ),
-            Divider(),
-            _buildSettingRow(
-              label: "Notification Enabled",
-              value: _notificationEnabled,
-              onChanged: (val) {
-                setState(() {
-                  _notificationEnabled = val;
-                });
-              },
-            ),
-            Divider(),
-          ],
+        children: [
+          _buildSectionTitle("Appearance"),
+          _buildSwitchTile(
+            icon: Icons.dark_mode,
+            title: "Dark Theme",
+            value: _isDark,
+            onChanged: (val) {
+              setState(() => _isDark = val);
+              widget.onToggleTheme(val);
+            },
+          ),
+          const Divider(height: 32),
+          _buildSectionTitle("Notifications"),
+          _buildSwitchTile(
+            icon: Icons.notifications_active,
+            title: "Enable Notifications",
+            value: _notificationEnabled,
+            onChanged: (val) {
+              setState(() => _notificationEnabled = val);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Text(
+        title,
+        style: TextStyle(
+          color: mainColor,
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 0.5,
         ),
       ),
     );
   }
 
-  Widget _buildSettingRow({
-    required String label,
+  Widget _buildSwitchTile({
+    required IconData icon,
+    required String title,
     required bool value,
-    required Function(bool) onChanged,
+    required ValueChanged<bool> onChanged,
   }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-          ),
-          Switch(
-            value: value,
-            onChanged: onChanged,
-            activeColor: mainColor,
-            activeTrackColor: mainColor.withOpacity(0.4),
-            inactiveThumbColor: Colors.grey,
-            inactiveTrackColor: Colors.grey[300],
-          ),
-        ],
+    return ListTile(
+      leading: Icon(icon, color: mainColor),
+      title: Text(title, style: const TextStyle(fontSize: 17)),
+      trailing: Switch(
+        value: value,
+        onChanged: onChanged,
+        activeColor: mainColor,
+        activeTrackColor: mainColor.withOpacity(0.4),
+        inactiveThumbColor: Colors.grey,
+        inactiveTrackColor: Colors.grey[300],
       ),
+      contentPadding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
     );
   }
 }

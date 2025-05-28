@@ -5,6 +5,7 @@ import 'package:internseek/ApplicationsPage.dart';
 import 'package:internseek/auth/signup.dart';
 import 'package:internseek/categories/add.dart';
 import 'package:internseek/companyProfile/adminSetting.dart';
+import 'package:internseek/splashScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'companyProfile/adminHome.dart';
 import 'package:internseek/companyProfile/companyHome.dart';
@@ -114,46 +115,7 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
       debugShowCheckedModeBanner: false,
-      home: FutureBuilder(
-        future: Firebase.initializeApp(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else {
-            final user = FirebaseAuth.instance.currentUser;
-            if (user != null && user.emailVerified) {
-              return FutureBuilder<DocumentSnapshot>(
-                future:
-                    FirebaseFirestore.instance
-                        .collection('users')
-                        .doc(user.uid)
-                        .get(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  if (!snapshot.hasData || !snapshot.data!.exists) {
-                    return LogIn(); // fallback if user doc missing
-                  }
-
-                  final data = snapshot.data!.data() as Map<String, dynamic>;
-                  final userType = data['userType'] ?? 'Student';
-
-                  if (userType == 'Company') {
-                    return const CompanyHome();
-                  } else if (userType == 'Admin') {
-                    return const adminHome();
-                  } else {
-                    return Home(userType: userType);
-                  }
-                },
-              );
-            } else {
-              return LogIn();
-            }
-          }
-        },
-      ),
+      home: SplashScreen(),
       routes: {
         "signup": (context) => SignUp(),
         "login": (context) => LogIn(),
