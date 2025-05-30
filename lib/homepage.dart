@@ -45,8 +45,8 @@ class _HomePageState extends State<HomePage> {
         onPressed: () {
           Navigator.of(context).pushNamed("addcategory");
         },
-        child: const Icon(Icons.add, size: 28),
         tooltip: 'Add Category',
+        child: const Icon(Icons.add, size: 28),
       ),
       appBar: AppBar(
         backgroundColor: primaryColor,

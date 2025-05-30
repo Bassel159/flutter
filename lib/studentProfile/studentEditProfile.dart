@@ -137,12 +137,12 @@ class _EditprofileState extends State<Editprofile> {
       if (data != null) {
         setState(() {
           nameController.text = data['studentName'] ?? '';
-          selectedMajor = data['major'] ?? null;
-          selectedGPA = data['gpa'] ?? null;
-          selectedUniversity = data['university'] ?? null;
-          selectedYear = data['yearofstudy'] ?? null;
-          selectedGrad = data['expectedgrad'] ?? null;
-          selectedPref = data['preferredindustry'] ?? null;
+          selectedMajor = data['major'];
+          selectedGPA = data['gpa'];
+          selectedUniversity = data['university'];
+          selectedYear = data['yearofstudy'];
+          selectedGrad = data['expectedgrad'];
+          selectedPref = data['preferredindustry'];
           isLoading = false;
         });
       } else {

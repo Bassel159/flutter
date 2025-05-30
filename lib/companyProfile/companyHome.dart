@@ -671,7 +671,7 @@ class _CompanyHomeState extends State<CompanyHome> {
 
                 if (isGoogleUser) {
                   GoogleSignIn googleSignIn = GoogleSignIn();
-                  await googleSignIn.disconnect();
+                  await googleSignIn.signOut();
                 }
 
                 await FirebaseAuth.instance.signOut();
