@@ -365,7 +365,29 @@ class _LogInState extends State<LogIn> {
                           } on FirebaseAuthException catch (e) {
                             isLoading = false;
                             setState(() {});
-                            print(e.message);
+
+                            String errorMessage;
+
+                            if (e.code == 'user-not-found' ||
+                                e.code == 'wrong-password') {
+                              errorMessage = "Incorrect email or password.";
+                            } else if (e.code == 'invalid-email') {
+                              errorMessage = "Invalid email format.";
+                            } else if (e.code == 'user-disabled') {
+                              errorMessage =
+                                  "This user account has been disabled.";
+                            } else {
+                              errorMessage =
+                                  "An error occurred during sign-in. Please try again.";
+                            }
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(errorMessage),
+                                backgroundColor: Colors.red,
+                                duration: Duration(seconds: 3),
+                              ),
+                            );
                           }
                         }
                       },
