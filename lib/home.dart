@@ -2,13 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:internseek/companyProfile/companyHome.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Home extends StatefulWidget {
   final String userType;
 
-  const Home({Key? key, required this.userType}) : super(key: key);
+  const Home({super.key, required this.userType});
 
   @override
   State<Home> createState() => _HomeState();
@@ -54,7 +53,6 @@ class _HomeState extends State<Home> {
   String studentId = "";
   String cvUrl = "";
 
-
   List<Map<String, dynamic>> companies = [];
   Map<String, Map<String, dynamic>> appliedApplications = {};
 
@@ -94,47 +92,49 @@ class _HomeState extends State<Home> {
 
   Future<void> fetchCompanies() async {
     try {
-      final snapshot = await FirebaseFirestore.instance
-          .collection('users')
-          .where('userType', isEqualTo: 'Company')
-          .where('isApproved', isEqualTo: true)
-          .where('requestedCompany', isEqualTo: true)
-          .get();
+      final snapshot =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .where('userType', isEqualTo: 'Company')
+              .where('isApproved', isEqualTo: true)
+              .where('requestedCompany', isEqualTo: true)
+              .get();
 
-      List<Map<String, dynamic>> tempList = snapshot.docs.map((doc) {
-        final data = doc.data();
-        return {
-          'id': doc.id,
-          'cName': data['companyName'] ?? 'Unnamed Company',
-          'email': data['email'] ?? '',
-          'industry': data['industry'] ?? '',
-          'location': data['location'] ?? '',
-          'isApproved': data['isApproved'] ?? false,
-          'requestedCompany': data['requestedCompany'] ?? false,
-        };
-      }).toList();
+      List<Map<String, dynamic>> tempList =
+          snapshot.docs.map((doc) {
+            final data = doc.data();
+            return {
+              'id': doc.id,
+              'cName': data['companyName'] ?? 'Unnamed Company',
+              'email': data['email'] ?? '',
+              'industry': data['industry'] ?? '',
+              'location': data['location'] ?? '',
+              'isApproved': data['isApproved'] ?? false,
+              'requestedCompany': data['requestedCompany'] ?? false,
+            };
+          }).toList();
 
       // Apply filters (if not null or empty)
-      companies = tempList.where((company) {
-        bool matches = true;
+      companies =
+          tempList.where((company) {
+            bool matches = true;
 
-        if (selectedIndustry != null && selectedIndustry!.isNotEmpty) {
-          matches &= company['industry'] == selectedIndustry;
-        }
+            if (selectedIndustry != null && selectedIndustry!.isNotEmpty) {
+              matches &= company['industry'] == selectedIndustry;
+            }
 
-        if (selectedLocation != null && selectedLocation!.isNotEmpty) {
-          matches &= company['location'] == selectedLocation;
-        }
+            if (selectedLocation != null && selectedLocation!.isNotEmpty) {
+              matches &= company['location'] == selectedLocation;
+            }
 
-        return matches;
-      }).toList();
+            return matches;
+          }).toList();
 
       setState(() {});
     } catch (e) {
       print('Error fetching companies: $e');
     }
   }
-
 
   Future<void> fetchAppliedCompanies() async {
     try {
@@ -208,9 +208,17 @@ class _HomeState extends State<Home> {
       await FirebaseFirestore.instance
           .collection('applications')
           .doc(applicationId)
-          .update({'status': 'cancelled'});
+          .delete();
 
+      // حذف التطبيق محليًا سريعًا لتحديث الواجهة مباشرة
+      appliedApplications.remove(companyId);
+
+      setState(() {});
+
+      // ثم إعادة جلب البيانات لتأكيد التزامن مع قاعدة البيانات
       await fetchAppliedCompanies();
+
+      // إذا أردت، يمكنك استدعاء setState مرة أخرى بعد جلب البيانات، ولكن غالبًا ليس ضروريًا
       setState(() {});
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -265,7 +273,6 @@ class _HomeState extends State<Home> {
             builder: (context) {
               return StatefulBuilder(
                 builder: (context, setModalState) {
-
                   return Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Wrap(
@@ -281,53 +288,82 @@ class _HomeState extends State<Home> {
                             ),
                           ),
                         ),
-                        Text("Filter Companies", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                        Text(
+                          "Filter Companies",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         SizedBox(height: 20),
 
                         DropdownButtonFormField<String>(
                           value: selectedIndustry,
                           isExpanded: true,
                           decoration: InputDecoration(labelText: 'Industry'),
-                          items: prefind.map((value) => DropdownMenuItem(value: value, child: Text(value))).toList(),
-                          onChanged: (value) => setModalState(() => selectedIndustry = value),
+                          items:
+                              prefind
+                                  .map(
+                                    (value) => DropdownMenuItem(
+                                      value: value,
+                                      child: Text(value),
+                                    ),
+                                  )
+                                  .toList(),
+                          onChanged:
+                              (value) =>
+                                  setModalState(() => selectedIndustry = value),
                         ),
                         SizedBox(height: 10),
 
                         DropdownButtonFormField<String>(
                           value: selectedLocation,
                           decoration: InputDecoration(labelText: 'Location'),
-                          items: location.map((value) => DropdownMenuItem(value: value, child: Text(value))).toList(),
-                          onChanged: (value) => setModalState(() => selectedLocation = value),
+                          items:
+                              location
+                                  .map(
+                                    (value) => DropdownMenuItem(
+                                      value: value,
+                                      child: Text(value),
+                                    ),
+                                  )
+                                  .toList(),
+                          onChanged:
+                              (value) =>
+                                  setModalState(() => selectedLocation = value),
                         ),
                         SizedBox(height: 20),
 
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              backgroundColor: Theme.of(context).colorScheme.primary,
-                              foregroundColor: Theme.of(context).colorScheme.onPrimary),
+                            backgroundColor:
+                                Theme.of(context).colorScheme.primary,
+                            foregroundColor:
+                                Theme.of(context).colorScheme.onPrimary,
+                          ),
                           onPressed: () {
                             print("Industry: $selectedIndustry");
                             print("Location: $selectedLocation");
                             Navigator.of(context).pushReplacementNamed('home');
-
                           },
                           child: Text("Apply Filters"),
                         ),
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              backgroundColor: Theme.of(context).colorScheme.primary,
-                              foregroundColor: Theme.of(context).colorScheme.onPrimary),
+                            backgroundColor:
+                                Theme.of(context).colorScheme.primary,
+                            foregroundColor:
+                                Theme.of(context).colorScheme.onPrimary,
+                          ),
                           onPressed: () {
                             setState(() {
                               selectedIndustry = null;
                               selectedLocation = null;
                             });
                             Navigator.of(context).pushReplacementNamed('home');
-
                           },
                           child: Text("Clear"),
                         ),
-
                       ],
                     ),
                   );
@@ -424,11 +460,11 @@ class _HomeState extends State<Home> {
                   Color statusColor = Colors.grey;
 
                   switch (applicationStatus) {
-                    case 'accepted':
+                    case 'Accepted':
                       statusText = 'Accepted';
                       statusColor = Colors.green;
                       break;
-                    case 'rejected':
+                    case 'Rejected':
                       statusText = 'Rejected';
                       statusColor = Colors.red;
                       break;
@@ -485,6 +521,7 @@ class _HomeState extends State<Home> {
                               ],
                             ),
                           ),
+
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
@@ -502,11 +539,14 @@ class _HomeState extends State<Home> {
                                   onPressed: null,
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: statusColor,
+                                    disabledBackgroundColor: statusColor,
                                     disabledForegroundColor: Colors.white,
                                   ),
                                   child: Text(statusText),
                                 ),
-                                if (applicationStatus == 'pending') ...[
+                                if (applicationStatus == 'pending' ||
+                                    applicationStatus == 'Accepted' ||
+                                    applicationStatus == 'Rejected') ...[
                                   SizedBox(height: 8),
                                   ElevatedButton(
                                     onPressed:

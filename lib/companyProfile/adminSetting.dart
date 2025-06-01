@@ -1,20 +1,25 @@
 import 'package:flutter/material.dart';
 
-class Setting extends StatefulWidget {
+class AdminSettings extends StatefulWidget {
   final Function(bool) onToggleTheme;
   final bool isDark;
 
-  const Setting({super.key, required this.onToggleTheme, required this.isDark});
+  const AdminSettings({
+    super.key,
+    required this.onToggleTheme,
+    required this.isDark,
+  });
 
   @override
-  State<Setting> createState() => _SettingState();
+  State<AdminSettings> createState() => _AdminSettingsState();
 }
 
-class _SettingState extends State<Setting> {
+class _AdminSettingsState extends State<AdminSettings> {
   late bool _isDark;
   bool _notificationEnabled = true;
+  bool _receiveReports = true;
 
-  final Color mainColor = Colors.deepPurple;
+  final Color mainColor = Colors.red; // لون الأدمن
 
   @override
   void initState() {
@@ -26,7 +31,10 @@ class _SettingState extends State<Setting> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Settings", style: TextStyle(color: Colors.white)),
+        title: const Text(
+          "Admin Settings",
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: mainColor,
         iconTheme: const IconThemeData(color: Colors.white),
         elevation: 2,
@@ -37,7 +45,7 @@ class _SettingState extends State<Setting> {
           _buildSectionTitle("Appearance"),
           _buildSwitchTile(
             icon: Icons.dark_mode,
-            title: "Dark Theme",
+            title: "Dark Mode",
             value: _isDark,
             onChanged: (val) {
               setState(() => _isDark = val);
@@ -47,11 +55,19 @@ class _SettingState extends State<Setting> {
           const Divider(height: 32),
           _buildSectionTitle("Notifications"),
           _buildSwitchTile(
-            icon: Icons.notifications_active,
+            icon: Icons.notifications,
             title: "Enable Notifications",
             value: _notificationEnabled,
             onChanged: (val) {
               setState(() => _notificationEnabled = val);
+            },
+          ),
+          _buildSwitchTile(
+            icon: Icons.flag,
+            title: "Receive Reports",
+            value: _receiveReports,
+            onChanged: (val) {
+              setState(() => _receiveReports = val);
             },
           ),
         ],

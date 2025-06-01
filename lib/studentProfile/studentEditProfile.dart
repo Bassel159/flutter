@@ -10,8 +10,13 @@ class Editprofile extends StatefulWidget {
 }
 
 class _EditprofileState extends State<Editprofile> {
+  // جلب uid المستخدم الحالي
   final uid = FirebaseAuth.instance.currentUser?.uid;
+
+  // نموذج للفورم للتحقق من صحة الحقول
   final _formKey = GlobalKey<FormState>();
+
+  // المتغيرات الخاصة بكل حقل
   String? selectedUniversity;
   String? selectedMajor;
   String? selectedGPA;
@@ -19,12 +24,16 @@ class _EditprofileState extends State<Editprofile> {
   String? selectedGrad;
   String? selectedPref;
 
+  // تحكم بالنص الخاص بالاسم
   TextEditingController nameController = TextEditingController();
 
+  bool isLoading = true; // حالة تحميل البيانات
+  bool isSaving = false; // حالة الحفظ
 
-  bool isLoading = true;
-  bool isSaving = false;
+  // اللون الرئيسي للتصميم
+  final Color mainColor = Colors.deepPurple;
 
+  // القوائم المستخدمة للاختيارات (Dropdown)
   final List<String> universities = [
     "Ajloun National University",
     "Al al-Bayt University",
@@ -90,10 +99,16 @@ class _EditprofileState extends State<Editprofile> {
     "2nd Year",
     "3rd Year",
     "4th Year",
-    "5th Year"
+    "5th Year",
   ];
   final List<String> gradyear = [
-    "2025","2026","2027","2028","2029","2030","2031",
+    "2025",
+    "2026",
+    "2027",
+    "2028",
+    "2029",
+    "2030",
+    "2031",
   ];
   final List<String> prefind = [
     "Mobile Development",
@@ -111,7 +126,10 @@ class _EditprofileState extends State<Editprofile> {
     "Cybersecurity",
   ];
 
+  // تحميل بيانات المستخدم من Firestore
   Future<void> loadUserData() async {
+    if (uid == null) return;
+
     try {
       final doc =
           await FirebaseFirestore.instance.collection('users').doc(uid).get();
@@ -119,12 +137,17 @@ class _EditprofileState extends State<Editprofile> {
       if (data != null) {
         setState(() {
           nameController.text = data['studentName'] ?? '';
-          selectedMajor = data['major'] ?? '';
-          selectedGPA = data['gpa'] ?? '';
-          selectedUniversity = data['university'] ?? '';
-          selectedYear = data['yearofstudy'] ?? '';
-          selectedGrad = data['expectedgrad'] ?? '';
-          selectedPref = data['preferredindustry'] ?? '';
+          selectedMajor = data['major'];
+          selectedGPA = data['gpa'];
+          selectedUniversity = data['university'];
+          selectedYear = data['yearofstudy'];
+          selectedGrad = data['expectedgrad'];
+          selectedPref = data['preferredindustry'];
+          isLoading = false;
+        });
+      } else {
+        // لا توجد بيانات
+        setState(() {
           isLoading = false;
         });
       }
@@ -138,6 +161,7 @@ class _EditprofileState extends State<Editprofile> {
     }
   }
 
+  // حفظ التعديلات إلى Firestore
   Future<void> saveChanges() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -156,8 +180,9 @@ class _EditprofileState extends State<Editprofile> {
         'preferredindustry': selectedPref,
       });
 
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Profile updated successfully'),
           behavior: SnackBarBehavior.floating,
           backgroundColor: Colors.green,
@@ -165,6 +190,7 @@ class _EditprofileState extends State<Editprofile> {
       );
       Navigator.of(context).pop(true);
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error updating profile: $e'),
@@ -192,219 +218,37 @@ class _EditprofileState extends State<Editprofile> {
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Edit Profile", style: TextStyle(color: Colors.white)),
-        centerTitle: true,
-        backgroundColor: Colors.deepPurple,
-        iconTheme: IconThemeData(color: Colors.white),
-        elevation: 0,
+  // تصميم Dropdown موحد مع معالج الأخطاء
+  Widget _buildDropdown({
+    required String label,
+    required String? value,
+    required List<String> items,
+    required Function(String?) onChanged,
+    IconData? icon,
+  }) {
+    return DropdownButtonFormField<String>(
+      value: value,
+      isExpanded: true,
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: icon != null ? Icon(icon, color: mainColor) : null,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: mainColor, width: 2),
+          borderRadius: BorderRadius.circular(10),
+        ),
       ),
-      body:
-          isLoading
-              ? Center(child: CircularProgressIndicator())
-              : SingleChildScrollView(
-                padding: EdgeInsets.all(24),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    children: [
-                      // Header
-                      Text(
-                        "Update Your Information",
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.deepPurple,
-                        ),
-                      ),
-                      SizedBox(height: 30),
-
-                      // Name Field
-                      _buildTextField(
-                        controller: nameController,
-                        label: "Full Name",
-                        icon: Icons.person,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your name';
-                          }
-                          return null;
-                        },
-                      ),
-                      SizedBox(height: 20),
-
-                      // Major Field
-                      DropdownButtonFormField<String>(
-                        isExpanded: true,
-                        decoration: InputDecoration(
-                          labelText: "Choose your University",
-                          border: OutlineInputBorder(),
-                        ),
-                        value: selectedUniversity,
-                        items: universities.map((item) {
-                          return DropdownMenuItem<String>(
-                            value: item,
-                            child: Text(item),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            selectedUniversity = value;
-                          });
-                        },
-                      ),
-                      SizedBox(height: 20),
-                      // University Field
-                      DropdownButtonFormField<String>(
-                        isExpanded: true,
-                        decoration: InputDecoration(
-                          labelText: "Choose your Major",
-                          border: OutlineInputBorder(),
-                        ),
-                        value: selectedMajor,
-                        items: Majors.map((item) {
-                          return DropdownMenuItem<String>(
-                            value: item,
-                            child: Text(item),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            selectedMajor = value;
-                          });
-                        },
-                      ),
-                      SizedBox(height: 40),
-                      DropdownButtonFormField<String>(
-                        isExpanded: true,
-                        decoration: InputDecoration(
-                          labelText: "Choose your GPA",
-                          border: OutlineInputBorder(),
-                        ),
-                        value: selectedGPA,
-                        items: GPA.map((item) {
-                          return DropdownMenuItem<String>(
-                            value: item,
-                            child: Text(item),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            selectedGPA = value;
-                          });
-                        },
-                      ),
-                      SizedBox(height: 40),
-                      DropdownButtonFormField<String>(
-                        isExpanded: true,
-                        decoration: InputDecoration(
-                          labelText: "Choose your Year of Study",
-                          border: OutlineInputBorder(),
-                        ),
-                        value: selectedYear,
-                        items: year.map((item) {
-                          return DropdownMenuItem<String>(
-                            value: item,
-                            child: Text(item),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            selectedYear = value;
-                          });
-                        },
-                      ),
-                      SizedBox(height: 40),
-                      DropdownButtonFormField<String>(
-                        isExpanded: true,
-                        decoration: InputDecoration(
-                          labelText: "Choose your Expected Graduation",
-                          border: OutlineInputBorder(),
-                        ),
-                        value: selectedGrad,
-                        items: gradyear.map((item) {
-                          return DropdownMenuItem<String>(
-                            value: item,
-                            child: Text(item),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            selectedGrad = value;
-                          });
-                        },
-                      ),
-                      SizedBox(height: 40),
-                      DropdownButtonFormField<String>(
-                        isExpanded: true,
-                        decoration: InputDecoration(
-                          labelText: "Choose your Preferred Industry",
-                          border: OutlineInputBorder(),
-                        ),
-                        value: selectedPref,
-                        items: prefind.map((item) {
-                          return DropdownMenuItem<String>(
-                            value: item,
-                            child: Text(item),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            selectedPref = value;
-                          });
-                        },
-                      ),
-                      SizedBox(height: 40),
-
-                      // Save Button
-                      SizedBox(
-                        width: double.infinity,
-                        height: 50,
-                        child: ElevatedButton(
-                          onPressed: isSaving ? null : saveChanges,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.deepPurple,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          child:
-                              isSaving
-                                  ? CircularProgressIndicator(
-                                    color: Colors.white,
-                                  )
-                                  : Text(
-                                    "SAVE CHANGES",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                        ),
-                      ),
-
-                      // Cancel Button
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: Text(
-                          "Cancel",
-                          style: TextStyle(
-                            color: Colors.deepPurple,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+      items:
+          items
+              .map((item) => DropdownMenuItem(value: item, child: Text(item)))
+              .toList(),
+      onChanged: onChanged,
+      validator:
+          (val) => val == null || val.isEmpty ? 'Please select $label' : null,
     );
   }
 
+  // تصميم TextField موحد مع التحقق
   Widget _buildTextField({
     required TextEditingController controller,
     required String label,
@@ -415,22 +259,230 @@ class _EditprofileState extends State<Editprofile> {
       controller: controller,
       decoration: InputDecoration(
         labelText: label,
-        prefixIcon: Icon(icon, color: Colors.deepPurple),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: Colors.grey),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: Colors.grey),
-        ),
+        prefixIcon: Icon(icon, color: mainColor),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: mainColor, width: 2),
           borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: Colors.deepPurple, width: 2),
         ),
-        contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
       ),
       validator: validator,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          "Edit Profile",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+        backgroundColor: mainColor,
+        elevation: 2,
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
+      body:
+          isLoading
+              ? const Center(
+                child: CircularProgressIndicator(color: Colors.deepPurple),
+              )
+              : SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 24,
+                ),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Update Your Information",
+                        style: TextStyle(
+                          fontSize: 26,
+                          fontWeight: FontWeight.bold,
+                          color: mainColor,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+
+                      // البطاقة الأولى: الاسم، الجامعة، التخصص
+                      Card(
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        margin: const EdgeInsets.only(bottom: 24),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            children: [
+                              _buildTextField(
+                                controller: nameController,
+                                label: "Full Name",
+                                icon: Icons.person,
+                                validator:
+                                    (value) =>
+                                        (value == null || value.isEmpty)
+                                            ? 'Please enter your name'
+                                            : null,
+                              ),
+                              const SizedBox(height: 20),
+                              _buildDropdown(
+                                label: "Choose your University",
+                                value: selectedUniversity,
+                                items: universities,
+                                onChanged:
+                                    (val) => setState(
+                                      () => selectedUniversity = val,
+                                    ),
+                                icon: Icons.school,
+                              ),
+                              const SizedBox(height: 20),
+                              _buildDropdown(
+                                label: "Choose your Major",
+                                value: selectedMajor,
+                                items: Majors,
+                                onChanged:
+                                    (val) =>
+                                        setState(() => selectedMajor = val),
+                                icon: Icons.computer,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      // البطاقة الثانية: المعدل، السنة، سنة التخرج المتوقعة
+                      Card(
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        margin: const EdgeInsets.only(bottom: 24),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            children: [
+                              _buildDropdown(
+                                label: "Choose your GPA",
+                                value: selectedGPA,
+                                items: GPA,
+                                onChanged:
+                                    (val) => setState(() => selectedGPA = val),
+                                icon: Icons.grade,
+                              ),
+                              const SizedBox(height: 20),
+                              _buildDropdown(
+                                label: "Choose your Year of Study",
+                                value: selectedYear,
+                                items: year,
+                                onChanged:
+                                    (val) => setState(() => selectedYear = val),
+                                icon: Icons.calendar_today,
+                              ),
+                              const SizedBox(height: 20),
+                              _buildDropdown(
+                                label: "Choose your Expected Graduation",
+                                value: selectedGrad,
+                                items: gradyear,
+                                onChanged:
+                                    (val) => setState(() => selectedGrad = val),
+                                icon: Icons.school_outlined,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      // البطاقة الثالثة: مجال التفضيل
+                      Card(
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        margin: const EdgeInsets.only(bottom: 32),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: _buildDropdown(
+                            label: "Preferred Industry",
+                            value: selectedPref,
+                            items: prefind,
+                            onChanged:
+                                (val) => setState(() => selectedPref = val),
+                            icon: Icons.business_center,
+                          ),
+                        ),
+                      ),
+
+                      // أزرار الحفظ والإلغاء
+                      Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              icon:
+                                  isSaving
+                                      ? const SizedBox(
+                                        width: 18,
+                                        height: 18,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: Colors.white,
+                                        ),
+                                      )
+                                      : const Icon(Icons.save),
+                              label: Text(
+                                isSaving ? "Saving..." : "Save Changes",
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: mainColor,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 14,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                textStyle: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              onPressed: isSaving ? null : saveChanges,
+                            ),
+                          ),
+                          const SizedBox(width: 15),
+                          OutlinedButton.icon(
+                            icon: const Icon(
+                              Icons.cancel,
+                              color: Colors.deepPurple,
+                            ),
+                            label: const Text(
+                              "Cancel",
+                              style: TextStyle(color: Colors.deepPurple),
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(color: mainColor, width: 2),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              textStyle: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            onPressed: () => Navigator.of(context).pop(),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
     );
   }
 }

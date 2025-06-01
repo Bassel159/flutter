@@ -68,6 +68,7 @@ class _studentProfileState extends State<studentProfile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.deepPurple[300],
       appBar: AppBar(
         title: Text("My Profile"),
         centerTitle: true,
@@ -77,53 +78,73 @@ class _studentProfileState extends State<studentProfile> {
       ),
       body:
           isLoading
-              ? Center(child: CircularProgressIndicator())
+              ? Center(
+                child: CircularProgressIndicator(color: Colors.deepPurple),
+              )
               : SingleChildScrollView(
-                padding: EdgeInsets.all(20),
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // Profile Header with Avatar
+                    // Profile Header with Avatar & Shadow
                     Container(
-                      margin: EdgeInsets.only(bottom: 30),
-                      child: Column(
-                        children: [
-                          CircleAvatar(
-                            radius: 50,
-                            backgroundColor: Colors.deepPurple[100],
-                            child: Icon(
-                              Icons.person,
-                              size: 50,
-                              color: Colors.deepPurple,
-                            ),
-                          ),
-                          SizedBox(height: 15),
-                          Text(
-                            nameStudent,
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.deepPurple,
-                            ),
-                          ),
-                          Text(
-                            "Student",
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey[600],
-                            ),
+                      padding: EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.deepPurple.withOpacity(0.2),
+                            spreadRadius: 3,
+                            blurRadius: 15,
+                            offset: Offset(0, 5),
                           ),
                         ],
                       ),
-                    ),
-
-                    // Profile Details Card
-                    Card(
-                      elevation: 4,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
+                      child: CircleAvatar(
+                        radius: 60,
+                        backgroundColor: Colors.deepPurple[100],
+                        child: Icon(
+                          Icons.person,
+                          size: 70,
+                          color: Colors.deepPurple,
+                        ),
                       ),
+                    ),
+                    SizedBox(height: 20),
+                    Text(
+                      nameStudent,
+                      style: TextStyle(
+                        fontSize: 26,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.deepPurple[800],
+                        letterSpacing: 1,
+                      ),
+                    ),
+                    SizedBox(height: 6),
+                    Text(
+                      "Student",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.deepPurple[300],
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 1,
+                      ),
+                    ),
+                    SizedBox(height: 30),
+
+                    // Profile Details Card with Elevation and Rounded Corners
+                    Card(
+                      elevation: 8,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      shadowColor: Colors.deepPurple.withOpacity(0.3),
                       child: Padding(
-                        padding: EdgeInsets.all(20),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 25,
+                          horizontal: 25,
+                        ),
                         child: Column(
                           children: [
                             _buildProfileItem(
@@ -131,37 +152,37 @@ class _studentProfileState extends State<studentProfile> {
                               title: "University",
                               value: university,
                             ),
-                            Divider(height: 30),
+                            Divider(height: 35, thickness: 1.2),
                             _buildProfileItem(
                               icon: Icons.school,
                               title: "Major",
                               value: major,
                             ),
-                            Divider(height: 30),
+                            Divider(height: 35, thickness: 1.2),
                             _buildProfileItem(
                               icon: Icons.email,
                               title: "Email",
                               value: email,
                             ),
-                            Divider(height: 30),
+                            Divider(height: 35, thickness: 1.2),
                             _buildProfileItem(
                               icon: Icons.star,
                               title: "GPA",
                               value: gpa,
                             ),
-                            Divider(height: 30),
+                            Divider(height: 35, thickness: 1.2),
                             _buildProfileItem(
                               icon: Icons.calendar_today,
                               title: "Year of Study",
                               value: yearofstudy,
                             ),
-                            Divider(height: 30),
+                            Divider(height: 35, thickness: 1.2),
                             _buildProfileItem(
                               icon: Icons.event,
                               title: "Expected Graduation",
                               value: expectedgrad,
                             ),
-                            Divider(height: 30),
+                            Divider(height: 35, thickness: 1.2),
                             _buildProfileItem(
                               icon: Icons.work,
                               title: "Preferred Industry",
@@ -172,7 +193,9 @@ class _studentProfileState extends State<studentProfile> {
                       ),
                     ),
 
-                    SizedBox(height: 30),
+                    SizedBox(height: 40),
+
+                    // Upload CV Button with Gradient and Shadow
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
@@ -185,23 +208,32 @@ class _studentProfileState extends State<studentProfile> {
                           }
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.deepPurple,
-                          padding: EdgeInsets.symmetric(vertical: 15),
+                          padding: EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(12),
                           ),
+                          elevation: 6,
+                          backgroundColor: Colors.deepPurple,
+                          shadowColor: Colors.deepPurpleAccent,
                         ),
                         child: Text(
                           'Upload Your CV',
-                          style: TextStyle(fontSize: 18, color: Colors.white),
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                            letterSpacing: 1,
+                          ),
                         ),
                       ),
                     ),
-                    SizedBox(height: 30),
-                    // Edit Button
+
+                    SizedBox(height: 20),
+
+                    // Edit Profile Button with Outline Style and Shadow
                     SizedBox(
                       width: double.infinity,
-                      child: ElevatedButton(
+                      child: OutlinedButton(
                         onPressed: () async {
                           final result = await Navigator.of(
                             context,
@@ -210,17 +242,20 @@ class _studentProfileState extends State<studentProfile> {
                             loadUserData();
                           }
                         },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.deepPurple,
-                          padding: EdgeInsets.symmetric(vertical: 15),
+                        style: OutlinedButton.styleFrom(
+                          side: BorderSide(color: Colors.deepPurple, width: 2),
+                          padding: EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          foregroundColor: Colors.deepPurple,
+                          textStyle: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 1,
                           ),
                         ),
-                        child: Text(
-                          'Edit Profile',
-                          style: TextStyle(fontSize: 18, color: Colors.white),
-                        ),
+                        child: Text('Edit Profile'),
                       ),
                     ),
                   ],
@@ -237,20 +272,35 @@ class _studentProfileState extends State<studentProfile> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, color: Colors.deepPurple, size: 28),
-        SizedBox(width: 15),
+        Container(
+          padding: EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: Colors.deepPurple[50],
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(icon, color: Colors.deepPurple, size: 28),
+        ),
+        SizedBox(width: 20),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 title,
-                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.deepPurple[300],
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-              SizedBox(height: 5),
+              SizedBox(height: 6),
               Text(
                 value,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.deepPurple[800],
+                ),
               ),
             ],
           ),

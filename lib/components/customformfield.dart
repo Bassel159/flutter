@@ -18,13 +18,10 @@ class CustomTextForm extends StatelessWidget {
       controller: mycontroller,
       decoration: InputDecoration(
         hintText: hinttext,
-        hintStyle: TextStyle(
-          fontSize: 14,
-          color: const Color.fromARGB(255, 39, 39, 39),
-        ),
+        hintStyle: TextStyle(fontSize: 14),
         contentPadding: EdgeInsets.symmetric(vertical: 2, horizontal: 20),
-        filled: true,
-        fillColor: Colors.grey[200],
+        filled: false,
+
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(50),
           borderSide: BorderSide(color: Colors.grey),

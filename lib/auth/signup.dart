@@ -97,10 +97,16 @@ class _SignUpState extends State<SignUp> {
     "2nd Year",
     "3rd Year",
     "4th Year",
-    "5th Year"
+    "5th Year",
   ];
   final List<String> gradyear = [
-    "2025","2026","2027","2028","2029","2030","2031",
+    "2025",
+    "2026",
+    "2027",
+    "2028",
+    "2029",
+    "2030",
+    "2031",
   ];
   final List<String> prefind = [
     "Mobile Development",
@@ -131,9 +137,6 @@ class _SignUpState extends State<SignUp> {
     "Tafilah",
     "Zarqa",
   ];
-
-
-
 
   @override
   void dispose() {
@@ -179,17 +182,22 @@ class _SignUpState extends State<SignUp> {
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.grey),
                       borderRadius: BorderRadius.circular(30),
-                      color: Colors.grey[200],
                     ),
                     child: DropdownButton<String>(
                       value: userType,
                       isExpanded: true,
                       underline: SizedBox(),
+                      dropdownColor: Theme.of(context).colorScheme.surface,
+                      iconEnabledColor: Theme.of(context).iconTheme.color,
+                      style: Theme.of(context).textTheme.bodyMedium,
                       items:
                           ['Student', 'Company'].map((type) {
-                            return DropdownMenuItem(
+                            return DropdownMenuItem<String>(
                               value: type,
-                              child: Text(type),
+                              child: Text(
+                                type,
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
                             );
                           }).toList(),
                       onChanged: (val) {
@@ -210,29 +218,30 @@ class _SignUpState extends State<SignUp> {
                       validator:
                           (val) => val!.isEmpty ? "Enter something" : null,
                     ),
-                    SizedBox(height: 20),           //University
+                    SizedBox(height: 20), //University
 
                     _buildLabel("University"),
-                   DropdownButtonFormField<String>(
-                    isExpanded: true,
+                    DropdownButtonFormField<String>(
+                      isExpanded: true,
                       decoration: InputDecoration(
-                      labelText: "Choose your University",
-                      border: OutlineInputBorder(),
+                        labelText: "Choose your University",
+                        border: OutlineInputBorder(),
+                      ),
+                      value: selectedUniversity,
+                      items:
+                          universities.map((item) {
+                            return DropdownMenuItem<String>(
+                              value: item,
+                              child: Text(item),
+                            );
+                          }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          selectedUniversity = value;
+                        });
+                      },
                     ),
-                    value: selectedUniversity,
-                    items: universities.map((item) {
-                      return DropdownMenuItem<String>(
-                        value: item,
-                        child: Text(item),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        selectedUniversity = value;
-                     });
-                    },
-                  ),
-                    SizedBox(height: 20),               //Major
+                    SizedBox(height: 20), //Major
 
                     _buildLabel("Major"),
                     DropdownButtonFormField<String>(
@@ -242,12 +251,13 @@ class _SignUpState extends State<SignUp> {
                         border: OutlineInputBorder(),
                       ),
                       value: selectedMajor,
-                      items: Majors.map((item) {
-                        return DropdownMenuItem<String>(
-                          value: item,
-                          child: Text(item),
-                        );
-                      }).toList(),
+                      items:
+                          Majors.map((item) {
+                            return DropdownMenuItem<String>(
+                              value: item,
+                              child: Text(item),
+                            );
+                          }).toList(),
                       onChanged: (value) {
                         setState(() {
                           selectedMajor = value;
@@ -255,7 +265,7 @@ class _SignUpState extends State<SignUp> {
                       },
                     ),
 
-                    SizedBox(height: 20),             //GPA
+                    SizedBox(height: 20), //GPA
                     _buildLabel("GPA"),
                     DropdownButtonFormField<String>(
                       isExpanded: true,
@@ -264,19 +274,20 @@ class _SignUpState extends State<SignUp> {
                         border: OutlineInputBorder(),
                       ),
                       value: selectedGPA,
-                      items: GPA.map((item) {
-                        return DropdownMenuItem<String>(
-                          value: item,
-                          child: Text(item),
-                        );
-                      }).toList(),
+                      items:
+                          GPA.map((item) {
+                            return DropdownMenuItem<String>(
+                              value: item,
+                              child: Text(item),
+                            );
+                          }).toList(),
                       onChanged: (value) {
                         setState(() {
                           selectedGPA = value;
                         });
                       },
                     ),
-                    SizedBox(height: 20),           //Year of Study
+                    SizedBox(height: 20), //Year of Study
                     _buildLabel("Year of Study"),
                     DropdownButtonFormField<String>(
                       isExpanded: true,
@@ -285,19 +296,20 @@ class _SignUpState extends State<SignUp> {
                         border: OutlineInputBorder(),
                       ),
                       value: selectedYear,
-                      items: year.map((item) {
-                        return DropdownMenuItem<String>(
-                          value: item,
-                          child: Text(item),
-                        );
-                      }).toList(),
+                      items:
+                          year.map((item) {
+                            return DropdownMenuItem<String>(
+                              value: item,
+                              child: Text(item),
+                            );
+                          }).toList(),
                       onChanged: (value) {
                         setState(() {
                           selectedYear = value;
                         });
                       },
                     ),
-                    SizedBox(height: 20),             //Expected Graduation
+                    SizedBox(height: 20), //Expected Graduation
                     _buildLabel("Expected Graduation"),
                     DropdownButtonFormField<String>(
                       isExpanded: true,
@@ -306,19 +318,20 @@ class _SignUpState extends State<SignUp> {
                         border: OutlineInputBorder(),
                       ),
                       value: selectedGrad,
-                      items: gradyear.map((item) {
-                        return DropdownMenuItem<String>(
-                          value: item,
-                          child: Text(item.toString()),
-                        );
-                      }).toList(),
+                      items:
+                          gradyear.map((item) {
+                            return DropdownMenuItem<String>(
+                              value: item,
+                              child: Text(item.toString()),
+                            );
+                          }).toList(),
                       onChanged: (value) {
                         setState(() {
                           selectedGrad = value;
                         });
                       },
                     ),
-                    SizedBox(height: 20),             //Preferred Industry
+                    SizedBox(height: 20), //Preferred Industry
                     _buildLabel("Preferred Industry"),
                     DropdownButtonFormField<String>(
                       isExpanded: true,
@@ -327,12 +340,13 @@ class _SignUpState extends State<SignUp> {
                         border: OutlineInputBorder(),
                       ),
                       value: selectedPref,
-                      items: prefind.map((item) {
-                        return DropdownMenuItem<String>(
-                          value: item,
-                          child: Text(item),
-                        );
-                      }).toList(),
+                      items:
+                          prefind.map((item) {
+                            return DropdownMenuItem<String>(
+                              value: item,
+                              child: Text(item),
+                            );
+                          }).toList(),
                       onChanged: (value) {
                         setState(() {
                           selectedPref = value;
@@ -350,7 +364,7 @@ class _SignUpState extends State<SignUp> {
                       validator:
                           (val) => val!.isEmpty ? "Enter something" : null,
                     ),
-                    SizedBox(height: 20),               //Industry
+                    SizedBox(height: 20), //Industry
                     _buildLabel("Industry"),
                     DropdownButtonFormField<String>(
                       isExpanded: true,
@@ -359,19 +373,20 @@ class _SignUpState extends State<SignUp> {
                         border: OutlineInputBorder(),
                       ),
                       value: selectedIndustry,
-                      items: prefind.map((item) {
-                        return DropdownMenuItem<String>(
-                          value: item,
-                          child: Text(item),
-                        );
-                      }).toList(),
+                      items:
+                          prefind.map((item) {
+                            return DropdownMenuItem<String>(
+                              value: item,
+                              child: Text(item),
+                            );
+                          }).toList(),
                       onChanged: (value) {
                         setState(() {
                           selectedIndustry = value;
                         });
                       },
                     ),
-                    _buildLabel("Location"),                //Location
+                    _buildLabel("Location"), //Location
                     DropdownButtonFormField<String>(
                       isExpanded: true,
                       decoration: InputDecoration(
@@ -379,12 +394,13 @@ class _SignUpState extends State<SignUp> {
                         border: OutlineInputBorder(),
                       ),
                       value: selectedLocation,
-                      items: location.map((item) {
-                        return DropdownMenuItem<String>(
-                          value: item,
-                          child: Text(item),
-                        );
-                      }).toList(),
+                      items:
+                          location.map((item) {
+                            return DropdownMenuItem<String>(
+                              value: item,
+                              child: Text(item),
+                            );
+                          }).toList(),
                       onChanged: (value) {
                         setState(() {
                           selectedLocation = value;
@@ -402,11 +418,45 @@ class _SignUpState extends State<SignUp> {
                   ),
                   SizedBox(height: 20),
                   _buildLabel("Password"),
-                  CustomTextForm(
-                    hinttext: "Enter your Password",
-                    mycontroller: password,
+                  TextFormField(
+                    controller: password,
                     validator: (val) => val!.isEmpty ? "Enter something" : null,
+                    obscureText: true,
+                    decoration: InputDecoration(
+                      hintText: "Enter your Password",
+                      hintStyle: TextStyle(
+                        fontSize: 14,
+                        color: Theme.of(context).hintColor,
+                      ),
+                      contentPadding: EdgeInsets.symmetric(
+                        vertical: 2,
+                        horizontal: 20,
+                      ),
+                      filled: true,
+                      fillColor:
+                          Theme.of(context).inputDecorationTheme.fillColor ??
+                          Theme.of(context).cardColor,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(50),
+                        borderSide: BorderSide(
+                          color: Theme.of(context).dividerColor,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(50),
+                        borderSide: BorderSide(
+                          color: Theme.of(context).dividerColor,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(50),
+                        borderSide: BorderSide(
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                    ),
                   ),
+
                   SizedBox(height: 20),
                 ],
               ),

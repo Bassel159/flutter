@@ -53,7 +53,7 @@ class _EditCProfileState extends State<EditCProfile> {
   Future<void> loadUserData() async {
     try {
       final doc =
-      await FirebaseFirestore.instance.collection('users').doc(uid).get();
+          await FirebaseFirestore.instance.collection('users').doc(uid).get();
       final data = doc.data();
       if (data != null) {
         setState(() {
@@ -67,9 +67,9 @@ class _EditCProfileState extends State<EditCProfile> {
       setState(() {
         isLoading = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error loading profile: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error loading profile: $e')));
     }
   }
 
@@ -125,130 +125,136 @@ class _EditCProfileState extends State<EditCProfile> {
 
   @override
   Widget build(BuildContext context) {
-    final mainColor = Color.fromARGB(255, 72, 144, 180);
+    final mainColor = Colors.blue;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Edit Company Profile", style: TextStyle(color: Colors.white)),
+        title: Text(
+          "Edit Company Profile",
+          style: TextStyle(color: Colors.white),
+        ),
         centerTitle: true,
         backgroundColor: mainColor,
         iconTheme: IconThemeData(color: Colors.white),
         elevation: 0,
       ),
-      body: isLoading
-          ? Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-        padding: EdgeInsets.all(24),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              Text(
-                "Update Company Information",
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: mainColor,
-                ),
-              ),
-              SizedBox(height: 30),
+      body:
+          isLoading
+              ? Center(child: CircularProgressIndicator())
+              : SingleChildScrollView(
+                padding: EdgeInsets.all(24),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      Text(
+                        "Update Company Information",
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: mainColor,
+                        ),
+                      ),
+                      SizedBox(height: 30),
 
-              // Company Name Field
-              _buildTextField(
-                controller: nameController,
-                label: "Company Name",
-                icon: Icons.business,
-                color: mainColor,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter the company name';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 20),
+                      // Company Name Field
+                      _buildTextField(
+                        controller: nameController,
+                        label: "Company Name",
+                        icon: Icons.business,
+                        color: mainColor,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter the company name';
+                          }
+                          return null;
+                        },
+                      ),
+                      SizedBox(height: 20),
 
-              // Industry Field
-              DropdownButtonFormField<String>(
-                isExpanded: true,
-                decoration: InputDecoration(
-                  labelText: "Choose your Industry",
-                  border: OutlineInputBorder(),
-                ),
-                value: selectedIndustry,
-                items: prefind.map((item) {
-                  return DropdownMenuItem<String>(
-                    value: item,
-                    child: Text(item),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    selectedIndustry = value;
-                  });
-                },
-              ),
-              SizedBox(height: 40),
-              DropdownButtonFormField<String>(
-                isExpanded: true,
-                decoration: InputDecoration(
-                  labelText: "Choose your Location",
-                  border: OutlineInputBorder(),
-                ),
-                value: selectedLocation,
-                items: location.map((item) {
-                  return DropdownMenuItem<String>(
-                    value: item,
-                    child: Text(item),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    selectedLocation = value;
-                  });
-                },
-              ),
-              SizedBox(height: 40),
-              // Save Button
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: isSaving ? null : saveChanges,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: mainColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  child: isSaving
-                      ? CircularProgressIndicator(color: Colors.white)
-                      : Text(
-                    "SAVE CHANGES",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
+                      // Industry Field
+                      DropdownButtonFormField<String>(
+                        isExpanded: true,
+                        decoration: InputDecoration(
+                          labelText: "Choose your Industry",
+                          border: OutlineInputBorder(),
+                        ),
+                        value: selectedIndustry,
+                        items:
+                            prefind.map((item) {
+                              return DropdownMenuItem<String>(
+                                value: item,
+                                child: Text(item),
+                              );
+                            }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedIndustry = value;
+                          });
+                        },
+                      ),
+                      SizedBox(height: 40),
+                      DropdownButtonFormField<String>(
+                        isExpanded: true,
+                        decoration: InputDecoration(
+                          labelText: "Choose your Location",
+                          border: OutlineInputBorder(),
+                        ),
+                        value: selectedLocation,
+                        items:
+                            location.map((item) {
+                              return DropdownMenuItem<String>(
+                                value: item,
+                                child: Text(item),
+                              );
+                            }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedLocation = value;
+                          });
+                        },
+                      ),
+                      SizedBox(height: 40),
+                      // Save Button
+                      SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: ElevatedButton(
+                          onPressed: isSaving ? null : saveChanges,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: mainColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child:
+                              isSaving
+                                  ? CircularProgressIndicator(
+                                    color: Colors.white,
+                                  )
+                                  : Text(
+                                    "SAVE CHANGES",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                        ),
+                      ),
 
-              // Cancel Button
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text(
-                  "Cancel",
-                  style: TextStyle(
-                    color: mainColor,
-                    fontSize: 16,
+                      // Cancel Button
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: Text(
+                          "Cancel",
+                          style: TextStyle(color: mainColor, fontSize: 16),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 
@@ -264,9 +270,7 @@ class _EditCProfileState extends State<EditCProfile> {
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: Icon(icon, color: color),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: color, width: 2),

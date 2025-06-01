@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class ApplicationsPage extends StatefulWidget {
   const ApplicationsPage({super.key});
@@ -93,7 +94,10 @@ class _ApplicationsPageState extends State<ApplicationsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('My Applications')),
+      appBar: AppBar(
+        title: Text('My Applications'),
+        backgroundColor: Colors.deepPurple,
+      ),
       body:
           isLoading
               ? Center(child: CircularProgressIndicator())
@@ -104,21 +108,17 @@ class _ApplicationsPageState extends State<ApplicationsPage> {
                 itemBuilder: (context, index) {
                   final app = applications[index];
                   final status = app['status'];
-                  final date2 =
+                  String date2 =
                       app['interviewDate'] != null
-                          ? (app['interviewDate'] as Timestamp)
-                              .toDate()
-                              .toLocal()
-                              .toString()
-                              .split('.')[0]
+                          ? DateFormat(
+                            'yyyy-MM-dd hh:mm a',
+                          ).format((app['interviewDate'] as Timestamp).toDate())
                           : 'Unknown Date';
                   final date =
                       app['appliedAt'] != null
-                          ? (app['appliedAt'] as Timestamp)
-                              .toDate()
-                              .toLocal()
-                              .toString()
-                              .split('.')[0]
+                          ? DateFormat(
+                            'yyyy-MM-dd hh:mm a',
+                          ).format((app['appliedAt'] as Timestamp).toDate())
                           : 'Unknown Date';
 
                   return Card(
@@ -140,11 +140,10 @@ class _ApplicationsPageState extends State<ApplicationsPage> {
                           ),
                           SizedBox(height: 4),
                           Text("Applied on: $date"),
-                          if (date2 != null)
-                            Text(
-                              "Interview Date: $date2",
-                              style: TextStyle(color: Colors.blueAccent),
-                            ),
+                          Text(
+                            "Interview Date: $date2",
+                            style: TextStyle(color: Colors.blueAccent),
+                          ),
                         ],
                       ),
 
