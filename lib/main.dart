@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:internseek/ApplicationsPage.dart';
 import 'package:internseek/auth/signup.dart';
-import 'package:internseek/categories/add.dart';
 import 'package:internseek/companyProfile/adminSetting.dart';
 import 'package:internseek/splashScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,14 +20,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'companyProfile/companySettings.dart';
 import 'companyProfile/editCProfile.dart';
 import 'firebase_options.dart';
-import 'homepage.dart';
 import 'components/theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  // استرجاع خيار الثيم من SharedPreferences
+  // Retrieve info from shared preference
   final prefs = await SharedPreferences.getInstance();
   final isDark = prefs.getBool('isDarkTheme') ?? false;
 
@@ -118,9 +116,7 @@ class _MyAppState extends State<MyApp> {
       routes: {
         "signup": (context) => SignUp(),
         "login": (context) => LogIn(),
-        "homepage": (context) => HomePage(),
-        "addcategory": (context) => AddCategory(),
-        "home": (context) => Home(userType: 'Student'), // مثال تمرير userType
+        "home": (context) => Home(userType: 'Student'),
         "settings":
             (context) => Setting(
               isDark: _themeMode == ThemeMode.dark,

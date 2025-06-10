@@ -63,7 +63,7 @@ class _ViewCVState extends State<ViewCV> {
     if (await canLaunchUrl(uri)) {
       await launchUrl(
         uri,
-        mode: LaunchMode.platformDefault, // أو LaunchMode.inAppWebView
+        mode: LaunchMode.platformDefault,
       );
     } else {
       ScaffoldMessenger.of(

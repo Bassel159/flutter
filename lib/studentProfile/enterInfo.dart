@@ -124,7 +124,7 @@ class _EnterInfoState extends State<EnterInfo> {
         'expectedgrad': selectedGrad,
         'preferredindustry': selectedPref,
         'userType': 'Student',
-      }, SetOptions(merge: true)); // merge avoids overwriting existing data
+      }, SetOptions(merge: true));
 
       Navigator.pushReplacementNamed(context, 'home');
     } catch (e) {
@@ -146,13 +146,13 @@ class _EnterInfoState extends State<EnterInfo> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async => false, // Prevent back navigation
+      onWillPop: () async => false,
       child: Scaffold(
         appBar: AppBar(
           title: Text("Enter Information"),
           backgroundColor: Colors.deepPurple,
           centerTitle: true,
-          automaticallyImplyLeading: false, // Hide back arrow
+          automaticallyImplyLeading: false,
         ),
         body: Padding(
           padding: const EdgeInsets.all(24),

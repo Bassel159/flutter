@@ -10,13 +10,10 @@ class Editprofile extends StatefulWidget {
 }
 
 class _EditprofileState extends State<Editprofile> {
-  // جلب uid المستخدم الحالي
   final uid = FirebaseAuth.instance.currentUser?.uid;
 
-  // نموذج للفورم للتحقق من صحة الحقول
   final _formKey = GlobalKey<FormState>();
 
-  // المتغيرات الخاصة بكل حقل
   String? selectedUniversity;
   String? selectedMajor;
   String? selectedGPA;
@@ -24,16 +21,13 @@ class _EditprofileState extends State<Editprofile> {
   String? selectedGrad;
   String? selectedPref;
 
-  // تحكم بالنص الخاص بالاسم
   TextEditingController nameController = TextEditingController();
 
-  bool isLoading = true; // حالة تحميل البيانات
-  bool isSaving = false; // حالة الحفظ
+  bool isLoading = true;
+  bool isSaving = false;
 
-  // اللون الرئيسي للتصميم
   final Color mainColor = Colors.deepPurple;
 
-  // القوائم المستخدمة للاختيارات (Dropdown)
   final List<String> universities = [
     "Ajloun National University",
     "Al al-Bayt University",
@@ -126,7 +120,6 @@ class _EditprofileState extends State<Editprofile> {
     "Cybersecurity",
   ];
 
-  // تحميل بيانات المستخدم من Firestore
   Future<void> loadUserData() async {
     if (uid == null) return;
 
@@ -146,7 +139,6 @@ class _EditprofileState extends State<Editprofile> {
           isLoading = false;
         });
       } else {
-        // لا توجد بيانات
         setState(() {
           isLoading = false;
         });
@@ -161,7 +153,6 @@ class _EditprofileState extends State<Editprofile> {
     }
   }
 
-  // حفظ التعديلات إلى Firestore
   Future<void> saveChanges() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -218,7 +209,6 @@ class _EditprofileState extends State<Editprofile> {
     super.dispose();
   }
 
-  // تصميم Dropdown موحد مع معالج الأخطاء
   Widget _buildDropdown({
     required String label,
     required String? value,
@@ -248,7 +238,6 @@ class _EditprofileState extends State<Editprofile> {
     );
   }
 
-  // تصميم TextField موحد مع التحقق
   Widget _buildTextField({
     required TextEditingController controller,
     required String label,
@@ -309,7 +298,6 @@ class _EditprofileState extends State<Editprofile> {
                       ),
                       const SizedBox(height: 24),
 
-                      // البطاقة الأولى: الاسم، الجامعة، التخصص
                       Card(
                         elevation: 4,
                         shape: RoundedRectangleBorder(
@@ -356,7 +344,6 @@ class _EditprofileState extends State<Editprofile> {
                         ),
                       ),
 
-                      // البطاقة الثانية: المعدل، السنة، سنة التخرج المتوقعة
                       Card(
                         elevation: 4,
                         shape: RoundedRectangleBorder(
@@ -398,7 +385,6 @@ class _EditprofileState extends State<Editprofile> {
                         ),
                       ),
 
-                      // البطاقة الثالثة: مجال التفضيل
                       Card(
                         elevation: 4,
                         shape: RoundedRectangleBorder(
@@ -418,7 +404,6 @@ class _EditprofileState extends State<Editprofile> {
                         ),
                       ),
 
-                      // أزرار الحفظ والإلغاء
                       Row(
                         children: [
                           Expanded(

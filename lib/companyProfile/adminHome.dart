@@ -41,7 +41,7 @@ class _adminHomeState extends State<adminHome> {
       case 'Pending':
         return isApproved == null;
       default:
-        return true; // All
+        return true;
     }
   }
 

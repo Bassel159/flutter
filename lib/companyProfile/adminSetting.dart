@@ -19,7 +19,7 @@ class _AdminSettingsState extends State<AdminSettings> {
   bool _notificationEnabled = true;
   bool _receiveReports = true;
 
-  final Color mainColor = Colors.red; // لون الأدمن
+  final Color mainColor = Colors.red;
 
   @override
   void initState() {

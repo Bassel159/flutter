@@ -26,7 +26,6 @@ class _SplashScreenState extends State<SplashScreen>
     super.initState();
     initialize();
 
-    // إعداد الأنيميشن
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),
@@ -80,7 +79,6 @@ class _SplashScreenState extends State<SplashScreen>
     super.dispose();
   }
 
-  // تصميم الشاشة
   @override
   Widget build(BuildContext context) {
     return Scaffold(

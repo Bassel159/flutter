@@ -18,7 +18,7 @@ class _CompanySettingsState extends State<CompanySettings> {
   late bool _isDark;
   bool _notificationEnabled = true;
 
-  final Color mainColor = Colors.blue; // لون الشركة
+  final Color mainColor = Colors.blue;
 
   @override
   void initState() {

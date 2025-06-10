@@ -114,7 +114,7 @@ class _HomeState extends State<Home> {
             };
           }).toList();
 
-      // Apply filters (if not null or empty)
+      // Apply filters bitwise AND operator
       companies =
           tempList.where((company) {
             bool matches = true;
@@ -210,15 +210,12 @@ class _HomeState extends State<Home> {
           .doc(applicationId)
           .delete();
 
-      // حذف التطبيق محليًا سريعًا لتحديث الواجهة مباشرة
       appliedApplications.remove(companyId);
 
       setState(() {});
 
-      // ثم إعادة جلب البيانات لتأكيد التزامن مع قاعدة البيانات
       await fetchAppliedCompanies();
 
-      // إذا أردت، يمكنك استدعاء setState مرة أخرى بعد جلب البيانات، ولكن غالبًا ليس ضروريًا
       setState(() {});
 
       ScaffoldMessenger.of(context).showSnackBar(

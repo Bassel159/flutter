@@ -40,7 +40,7 @@ class _ApplicationsPageState extends State<ApplicationsPage> {
       final appData = appDoc.data();
       final companyId = appData['companyId'] as String;
 
-      // Add only the latest application per company (since apps are ordered descending)
+
       if (!latestApplicationsByCompany.containsKey(companyId)) {
         final companyDoc =
             await FirebaseFirestore.instance
@@ -153,7 +153,6 @@ class _ApplicationsPageState extends State<ApplicationsPage> {
                         labelStyle: TextStyle(color: Colors.white),
                       ),
                       onTap: () {
-                        // Optionally add application details here
                       },
                     ),
                   );

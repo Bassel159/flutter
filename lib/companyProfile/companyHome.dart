@@ -178,7 +178,7 @@ class _CompanyHomeState extends State<CompanyHome> {
       });
     }
 
-    // Remove duplicates (keep latest application per student)
+    // Remove duplicates
     Map<String, Map<String, dynamic>> uniqueApplications = {};
     for (var app in tempList) {
       if (!uniqueApplications.containsKey(app['studentId'])) {
@@ -190,7 +190,7 @@ class _CompanyHomeState extends State<CompanyHome> {
     List<Map<String, dynamic>> filteredList =
         uniqueApplications.values.toList();
 
-    // Apply filters if any of the selected fields is not null
+    // Apply filters if any of the selected fields is not null (bitwise AND operator)
     filteredList =
         filteredList.where((app) {
           bool matches = true;
@@ -739,7 +739,6 @@ class _CompanyHomeState extends State<CompanyHome> {
                             ),
                           ),
 
-                          // Buttons
                           Column(
                             children: [
                               IconButton(
@@ -748,12 +747,12 @@ class _CompanyHomeState extends State<CompanyHome> {
                                 onPressed: () async {
                                   final cvUrl = (await FirebaseFirestore.instance
                                       .collection('users')
-                                      .doc(app['studentId']) // replace with correct UID field
+                                      .doc(app['studentId'])
                                       .get())
                                       .data()?['cv_url'];
 
                                   if (cvUrl != null) {
-                                    viewCV(cvUrl); // your function to launch the URL
+                                    viewCV(cvUrl);
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(content: Text('❌ CV not found')),

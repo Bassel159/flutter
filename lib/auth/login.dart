@@ -52,23 +52,20 @@ class _LogInState extends State<LogIn> {
           await FirebaseFirestore.instance.collection('users').doc(uid).get();
 
       if (userDoc.exists) {
-        // ✅ Existing user: go to home screen
+        //  Existing user: go to home screen
         Navigator.of(context).pushReplacementNamed("home");
       } else {
-        // 🆕 New user: create a minimal user record if needed
+        //  New user
         await FirebaseFirestore.instance.collection('users').doc(uid).set({
           'email': user.email,
           'studentName': user.displayName,
-          // You can add more fields here if required later
         });
 
-        // 🚪 Route to enter info screen
         Navigator.of(context).pushReplacementNamed("enterinfo");
       }
     } catch (e) {
       print("Google sign-in error: $e");
 
-      // Show an error message to the user if something goes wrong
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text("Error during Google sign-in")));

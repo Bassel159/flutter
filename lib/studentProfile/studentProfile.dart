@@ -86,7 +86,6 @@ class _studentProfileState extends State<studentProfile> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // Profile Header with Avatar & Shadow
                     Container(
                       padding: EdgeInsets.all(10),
                       decoration: BoxDecoration(
@@ -133,7 +132,6 @@ class _studentProfileState extends State<studentProfile> {
                     ),
                     SizedBox(height: 30),
 
-                    // Profile Details Card with Elevation and Rounded Corners
                     Card(
                       elevation: 8,
                       shape: RoundedRectangleBorder(
@@ -195,7 +193,6 @@ class _studentProfileState extends State<studentProfile> {
 
                     SizedBox(height: 40),
 
-                    // Upload CV Button with Gradient and Shadow
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
@@ -230,7 +227,6 @@ class _studentProfileState extends State<studentProfile> {
 
                     SizedBox(height: 20),
 
-                    // Edit Profile Button with Outline Style and Shadow
                     SizedBox(
                       width: double.infinity,
                       child: OutlinedButton(

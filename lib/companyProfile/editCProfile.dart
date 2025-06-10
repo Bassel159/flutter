@@ -215,7 +215,6 @@ class _EditCProfileState extends State<EditCProfile> {
                         },
                       ),
                       SizedBox(height: 40),
-                      // Save Button
                       SizedBox(
                         width: double.infinity,
                         height: 50,
@@ -243,7 +242,6 @@ class _EditCProfileState extends State<EditCProfile> {
                         ),
                       ),
 
-                      // Cancel Button
                       TextButton(
                         onPressed: () => Navigator.pop(context),
                         child: Text(

@@ -67,7 +67,7 @@ class _UploadCVState extends State<UploadCV> {
     if (await canLaunchUrl(uri)) {
       await launchUrl(
         uri,
-        mode: LaunchMode.platformDefault, // أو LaunchMode.inAppWebView
+        mode: LaunchMode.platformDefault,
       );
     } else {
       ScaffoldMessenger.of(
@@ -90,19 +90,16 @@ class _UploadCVState extends State<UploadCV> {
       final storageRef = FirebaseStorage.instance.ref().child('cvs/$fileName');
 
       try {
-        // 1. حذف الملف القديم إن وجد
         await storageRef.delete().catchError((e) {
           print("⚠️ لم يتم حذف الملف القديم أو غير موجود: $e");
         });
 
-        // 2. رفع الملف الجديد بنفس الاسم
         UploadTask uploadTask = storageRef.putFile(file);
         TaskSnapshot snapshot = await uploadTask;
 
         if (snapshot.state == TaskState.success) {
           final downloadUrl = await snapshot.ref.getDownloadURL();
 
-          // 3. حفظ الرابط مرة واحدة فقط (أو تجاهله إذا محفوظ مسبقًا)
           await FirebaseFirestore.instance.collection('users').doc(uid).set({
             'cv_url': downloadUrl,
             'uploaded_at': FieldValue.serverTimestamp(),

@@ -67,7 +67,6 @@ class _CompanyProfileState extends State<CompanyProfile> {
                 padding: EdgeInsets.all(20),
                 child: Column(
                   children: [
-                    // Profile Header
                     Container(
                       margin: EdgeInsets.only(bottom: 30),
                       child: Column(
@@ -98,7 +97,6 @@ class _CompanyProfileState extends State<CompanyProfile> {
                       ),
                     ),
 
-                    // Profile Details Card
                     Card(
                       elevation: 4,
                       shape: RoundedRectangleBorder(
@@ -142,7 +140,6 @@ class _CompanyProfileState extends State<CompanyProfile> {
 
                     SizedBox(height: 30),
 
-                    // Edit Button
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
