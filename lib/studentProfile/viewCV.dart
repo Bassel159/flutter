@@ -44,7 +44,7 @@ class _ViewCVState extends State<ViewCV> {
         });
       }
     } catch (e) {
-      print('خطأ في جلب الرابط: $e');
+      print('Error in URL: $e');
       setState(() {
         isLoading = false;
       });
@@ -55,7 +55,7 @@ class _ViewCVState extends State<ViewCV> {
     if (cvUrl == null) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text("❌ لا يوجد رابط للسيرة الذاتية")));
+      ).showSnackBar(SnackBar(content: Text("❌ URL not found")));
       return;
     }
 
@@ -68,7 +68,7 @@ class _ViewCVState extends State<ViewCV> {
     } else {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text("❌ لا يمكن فتح الرابط")));
+      ).showSnackBar(SnackBar(content: Text("❌ Cannot open URL")));
     }
   }
 
@@ -76,7 +76,7 @@ class _ViewCVState extends State<ViewCV> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("عرض السيرة الذاتية"),
+        title: Text("Show CV"),
         backgroundColor: Colors.deepPurple,
         foregroundColor: Colors.white,
       ),
@@ -85,11 +85,11 @@ class _ViewCVState extends State<ViewCV> {
             isLoading
                 ? CircularProgressIndicator()
                 : cvUrl == null
-                ? Text("❌ لا توجد سيرة ذاتية مرفوعة")
+                ? Text("❌ No CV found")
                 : ElevatedButton.icon(
                   onPressed: openCV,
                   icon: Icon(Icons.picture_as_pdf),
-                  label: Text("عرض السيرة الذاتية"),
+                  label: Text("Show CV"),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.deepPurple,
                     foregroundColor: Colors.white,

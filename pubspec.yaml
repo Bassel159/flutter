@@ -45,6 +45,12 @@ dependencies:
   url_launcher: ^6.2.4
   shared_preferences: ^2.2.2
   intl: ^0.18.1
+  flutter_launcher_icons: ^0.13.1
+
+flutter_launcher_icons:
+    android: true
+    ios: false
+    image_path: "assets/logo1.jpg"
 
 
 dev_dependencies:

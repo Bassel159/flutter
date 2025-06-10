@@ -48,7 +48,7 @@ class _UploadCVState extends State<UploadCV> {
         });
       }
     } catch (e) {
-      print('خطأ في جلب الرابط: $e');
+      print('Error in receiving URL: $e');
       setState(() {
         isLoading = false;
       });
@@ -59,7 +59,7 @@ class _UploadCVState extends State<UploadCV> {
     if (cvUrl == null) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text("❌ لا يوجد رابط للسيرة الذاتية")));
+      ).showSnackBar(SnackBar(content: Text("❌ URL not found")));
       return;
     }
 
@@ -72,7 +72,7 @@ class _UploadCVState extends State<UploadCV> {
     } else {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text("❌ لا يمكن فتح الرابط")));
+      ).showSnackBar(SnackBar(content: Text("❌ Cannot open URL")));
     }
   }
 
@@ -91,7 +91,7 @@ class _UploadCVState extends State<UploadCV> {
 
       try {
         await storageRef.delete().catchError((e) {
-          print("⚠️ لم يتم حذف الملف القديم أو غير موجود: $e");
+          print("⚠️ File not found $e");
         });
 
         UploadTask uploadTask = storageRef.putFile(file);
@@ -106,22 +106,22 @@ class _UploadCVState extends State<UploadCV> {
           }, SetOptions(merge: true));
 
           setState(() {
-            _statusMessage = '✅ تم رفع السيرة الذاتية بنجاح واستبدال القديمة.';
+            _statusMessage = '✅ CV Uploaded successfully';
             cvUrl = downloadUrl;
           });
         } else {
           setState(() {
-            _statusMessage = '❌ فشل في رفع الملف.';
+            _statusMessage = '❌ Failure in uploading CV';
           });
         }
       } catch (e) {
         setState(() {
-          _statusMessage = '❌ خطأ أثناء رفع الملف أو حذفه: $e';
+          _statusMessage = '❌ Error in uploading CV $e';
         });
       }
     } else {
       setState(() {
-        _statusMessage = 'لم يتم اختيار أي ملف.';
+        _statusMessage = 'No file was chosen';
       });
     }
   }
