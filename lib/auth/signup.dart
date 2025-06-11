@@ -485,7 +485,7 @@ class _SignUpState extends State<SignUp> {
                             'gpa': selectedGPA,
                             'yearofstudy': selectedYear,
                             'expectedgrad': selectedGrad,
-                            'prefindustry': selectedPref,
+                            'preferredindustry': selectedPref,
                           } else ...{
                             'companyName': companyName.text,
                             'industry': selectedIndustry,
