@@ -481,7 +481,7 @@ class _SignUpState extends State<SignUp> {
                           if (userType == 'Student') ...{
                             'studentName': studentName.text,
                             'university': selectedUniversity,
-                            'major': selectedGrad,
+                            'major': selectedMajor,
                             'gpa': selectedGPA,
                             'yearofstudy': selectedYear,
                             'expectedgrad': selectedGrad,
